@@ -1,7 +1,6 @@
-// Copyright (c) 2014-2015 The ShadowCoin developers
+// Copyright (c) 2014 The ShadowCoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
 #ifndef SEC_MESSAGE_H
 #define SEC_MESSAGE_H
 
@@ -20,8 +19,7 @@ const unsigned int SMSG_PL_HDR_LEN      = 1+20+65+4;         // length of encryp
 const unsigned int SMSG_BUCKET_LEN      = 60 * 10;           // in seconds
 const unsigned int SMSG_RETENTION       = 60 * 60 * 48;      // in seconds
 const unsigned int SMSG_SEND_DELAY      = 2;                 // in seconds, SecureMsgSendData will delay this long between firing
-const unsigned int SMSG_THREAD_DELAY    = 30;
-const unsigned int SMSG_THREAD_LOG_GAP  = 6;
+const unsigned int SMSG_THREAD_DELAY    = 20;
 
 const unsigned int SMSG_TIME_LEEWAY     = 60;
 const unsigned int SMSG_TIME_IGNORE     = 90;                // seconds that a peer is ignored for if they fail to deliver messages for a smsgWant
@@ -217,12 +215,10 @@ public:
         // -- default options
         fNewAddressRecv = true;
         fNewAddressAnon = true;
-        fScanIncoming   = true;
     }
 
     bool fNewAddressRecv;
     bool fNewAddressAnon;
-    bool fScanIncoming;
 };
 
 
@@ -367,18 +363,17 @@ int SecureMsgStore(SecureMessage& smsg, bool fUpdateBucket);
 
 
 
-int SecureMsgSend(std::string &addressFrom, std::string &addressTo, std::string &message, std::string &sError);
+int SecureMsgSend(std::string& addressFrom, std::string& addressTo, std::string& message, std::string& sError);
 
 int SecureMsgValidate(uint8_t *pHeader, uint8_t *pPayload, uint32_t nPayload);
 int SecureMsgSetHash(uint8_t *pHeader, uint8_t *pPayload, uint32_t nPayload);
 
-int SecureMsgEncrypt(SecureMessage &smsg, const std::string &addressFrom, const std::string &addressTo, const std::string &message);
+int SecureMsgEncrypt(SecureMessage& smsg, std::string& addressFrom, std::string& addressTo, std::string& message);
 
-int SecureMsgDecrypt(bool fTestOnly, std::string &address, uint8_t *pHeader, uint8_t *pPayload, uint32_t nPayload, MessageData &msg);
-int SecureMsgDecrypt(bool fTestOnly, std::string &address, SecureMessage &smsg, MessageData &msg);
+int SecureMsgDecrypt(bool fTestOnly, std::string& address, uint8_t *pHeader, uint8_t *pPayload, uint32_t nPayload, MessageData& msg);
+int SecureMsgDecrypt(bool fTestOnly, std::string& address, SecureMessage& smsg, MessageData& msg);
 
 
 
 #endif // SEC_MESSAGE_H
-
 

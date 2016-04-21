@@ -18,25 +18,6 @@
 
 #include "ringsig.h"
 
-/*
-prefixes
-    ao
-    ki
-    version
-    tx
-    bidx
-    bhdx
-    hashBestChain
-    hashBestHeaderChain
-    bnBestInvalidTrust
-    hashSyncCheckpoint
-    strCheckpointPubKey
-    
-    
-    old:
-        blockindex
-*/
-
 // Class that provides access to a LevelDB. Note that this class is frequently
 // instantiated on the stack and then destroyed again, so instantiation has to
 // be very cheap. Unfortunately that means, a CTxDB instance is actually just a
@@ -236,7 +217,6 @@ public:
     bool ReadAnonOutput(CPubKey& pkCoin, CAnonOutput& ao);
     bool EraseAnonOutput(CPubKey& pkCoin);
     
-    bool EraseRange(const std::string &sPrefix, uint32_t &nAffected);
     bool ReadTxIndex(uint256 hash, CTxIndex& txindex);
     bool UpdateTxIndex(uint256 hash, const CTxIndex& txindex);
     bool AddTxIndex(const CTransaction& tx, const CDiskTxPos& pos, int nHeight);

@@ -39,8 +39,6 @@ bool fThinFullIndex = false; // when in thin mode don't keep all headers in memo
 bool fReindexing = false;
 bool fHaveGUI = false;
 volatile bool fIsStaking = false; // looks at stake weight also
-bool fMakeExtKeyInitials = false;
-volatile bool fPassGuiAddresses = false; // force the gui to process new addresses, gui doesn't update addresses when syncing
 
 bool fConfChange;
 bool fEnforceCanonical;
@@ -56,8 +54,5 @@ int64_t nMinTxFee = MIN_TX_FEE;
 unsigned int nStakeSplitAge = 1 * 24 * 60 * 60;
 int64_t nStakeCombineThreshold = 1000 * COIN;
 
-uint32_t nExtKeyLookAhead = 10;
-
-int64_t nTimeLastMblkRecv = 0;
 
 

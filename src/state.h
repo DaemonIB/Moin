@@ -61,8 +61,6 @@ static const int64_t OCOIN_YEAR_REWARD = 10 * CENT; // 10% third year
 static const int64_t ICOIN_YEAR_REWARD = 5 * CENT; //  5% fourth year 
 static const int64_t NCOIN_YEAR_REWARD = 2 * CENT; //  2% fifth year
 
-static const int64_t MBLK_RECEIVE_TIMEOUT = 60; // seconds
-
 
 extern int nNodeMode;
 extern int nNodeState;
@@ -106,8 +104,6 @@ extern bool fThinFullIndex;
 extern bool fReindexing;
 extern bool fHaveGUI;
 extern volatile bool fIsStaking;
-extern bool fMakeExtKeyInitials;
-extern volatile bool fPassGuiAddresses;
 
 extern bool fConfChange;
 extern bool fEnforceCanonical;
@@ -121,9 +117,6 @@ extern int64_t nMinTxFee;
 
 extern unsigned int nStakeSplitAge;
 extern int64_t nStakeCombineThreshold;
-
-extern uint32_t nExtKeyLookAhead;
-extern int64_t nTimeLastMblkRecv;
 
 
 #endif /* COIN_STATE_H */

@@ -3,7 +3,6 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "irc.h"
 #include "db.h"
 #include "net.h"
 #include "init.h"
@@ -38,7 +37,7 @@ bool fDiscover = true;
 bool fUseUPnP = false;
 
 CCriticalSection cs_mapLocalHost;
-std::map<CNetAddr, LocalServiceInfo> mapLocalHost;
+map<CNetAddr, LocalServiceInfo> mapLocalHost;
 static bool vfReachable[NET_MAX] = {};
 static bool vfLimited[NET_MAX] = {};
 static CNode* pnodeLocalHost = NULL;
@@ -47,23 +46,23 @@ uint64_t nLocalHostNonce = 0;
 static std::vector<SOCKET> vhListenSocket;
 CAddrMan addrman;
 
-std::vector<CNode*> vNodes;
+vector<CNode*> vNodes;
 CCriticalSection cs_vNodes;
 
 CCriticalSection cs_connectNode;
 
-std::map<CInv, CDataStream> mapRelay;
-deque<std::pair<int64_t, CInv> > vRelayExpiration;
+map<CInv, CDataStream> mapRelay;
+deque<pair<int64_t, CInv> > vRelayExpiration;
 CCriticalSection cs_mapRelay;
-std::map<CInv, int64_t> mapAlreadyAskedFor;
+map<CInv, int64_t> mapAlreadyAskedFor;
 
-static deque<std::string> vOneShots;
+static deque<string> vOneShots;
 CCriticalSection cs_vOneShots;
 
-std::set<CNetAddr> setservAddNodeAddresses;
+set<CNetAddr> setservAddNodeAddresses;
 CCriticalSection cs_setservAddNodeAddresses;
 
-std::vector<std::string> vAddedNodes;
+vector<std::string> vAddedNodes;
 CCriticalSection cs_vAddedNodes;
 
 static CSemaphore *semOutbound = NULL;
@@ -1117,10 +1116,14 @@ void ThreadMapPort()
 #ifndef UPNPDISCOVER_SUCCESS
     /* miniupnpc 1.5 */
     devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0);
-#else
+#elif MINIUPNPC_API_VERSION < 14
     /* miniupnpc 1.6 */
     int error = 0;
     devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, &error);
+#else
+    /* miniupnpc 1.9.20150730 */
+    int error = 0;
+    devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, 2, &error);
 #endif
 
     struct UPNPUrls urls;
@@ -1328,8 +1331,8 @@ void ThreadOpenConnections()
         
         CSemaphoreGrant grant(*semOutbound);
         
-        // Add seed nodes
-        if (addrman.size() == 0 && (GetTime() - nStart > 60))
+        // Add seed nodes if IRC isn't working
+        if (addrman.size() == 0 && (GetTime() - nStart > 60) && !fTestNet)
         {
             static bool done = false;
             if (!done)
@@ -1348,7 +1351,7 @@ void ThreadOpenConnections()
         // Only connect out to one peer per network group (/16 for IPv4).
         // Do this here so we don't have to critsect vNodes inside mapAddresses critsect.
         int nOutbound = 0;
-        std::set<std::vector<unsigned char> > setConnected;
+        std::set<vector<unsigned char> > setConnected;
         {
             LOCK(cs_vNodes);
             BOOST_FOREACH(CNode* pnode, vNodes)
@@ -1400,7 +1403,7 @@ void ThreadOpenConnections()
         if (addrConnect.IsValid())
         {
             OpenNetworkConnection(addrConnect, &grant);
-        };
+        }
     };
 }
 
@@ -1558,7 +1561,7 @@ void ThreadMessageHandler()
                     if (pnode->nSendSize < SendBufferSize() && (!pnode->vRecvGetData.empty() || (!pnode->vRecvMsg.empty() && pnode->vRecvMsg[0].complete())))
                         fSleep = false;
                 }
-            } // cs_vRecvMsg
+            }
 
             boost::this_thread::interruption_point();
 
@@ -1567,7 +1570,7 @@ void ThreadMessageHandler()
                 TRY_LOCK(pnode->cs_vSend, lockSend);
                 if (lockSend)
                     SendMessages(pnode, vNodesCopy, pnode == pnodeTrickle);
-            } // cs_vSend
+            }
         };
 
         {

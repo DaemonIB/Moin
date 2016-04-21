@@ -216,7 +216,6 @@ HEADERS += \
     src/miner.h \
     src/net.h \
     src/key.h \
-    src/extkey.h \
     src/eckey.h \
     src/db.h \
     src/txdb.h \
@@ -246,6 +245,7 @@ HEADERS += \
     src/qt/addresstablemodel.h \
     src/qt/coincontroldialog.h \
     src/qt/coincontroltreewidget.h \
+    src/qt/signverifymessagedialog.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
     src/qt/bitcoinaddressvalidator.h \
@@ -272,6 +272,7 @@ HEADERS += \
     src/qt/messagemodel.h \
     src/qt/moingui.h \
     src/qt/moinbridge.h \
+    src/qt/addressbookpage.h    
 
 SOURCES += \
     src/alert.cpp \
@@ -283,7 +284,6 @@ SOURCES += \
     src/hash.cpp \
     src/netbase.cpp \
     src/key.cpp \
-    src/extkey.cpp \
     src/eckey.cpp \
     src/script.cpp \
     src/main.cpp \
@@ -321,10 +321,10 @@ SOURCES += \
     src/rpcblockchain.cpp \
     src/rpcrawtransaction.cpp \
     src/rpcsmessage.cpp \
-    src/rpcextkey.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/coincontroldialog.cpp \
     src/qt/coincontroltreewidget.cpp \
+    src/qt/signverifymessagedialog.cpp \
     src/qt/aboutdialog.cpp \
     src/qt/editaddressdialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
@@ -352,15 +352,18 @@ SOURCES += \
     src/qt/moingui.cpp \
     src/qt/moin.cpp \
     src/qt/moinbridge.cpp \
+    src/qt/addressbookpage.cpp
     
 
 FORMS += \
     src/qt/forms/coincontroldialog.ui \
+    src/qt/forms/signverifymessagedialog.ui \
     src/qt/forms/aboutdialog.ui \
     src/qt/forms/editaddressdialog.ui \
     src/qt/forms/transactiondescdialog.ui \
     src/qt/forms/askpassphrasedialog.ui \
-    src/qt/forms/rpcconsole.ui
+    src/qt/forms/rpcconsole.ui \
+    src/qt/forms/addressbookpage.ui
 
 
 CODECFORTR = UTF-8

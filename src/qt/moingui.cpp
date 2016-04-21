@@ -6,6 +6,8 @@
 #include "transactiontablemodel.h"
 #include "transactionrecord.h"
 
+#include "signverifymessagedialog.h"
+
 #include "aboutdialog.h"
 #include "clientmodel.h"
 #include "walletmodel.h"
@@ -86,7 +88,7 @@ MoinGUI::MoinGUI(QWidget *parent):
     setCentralWidget(webView);
 
     resize(1280, 720);
-    setWindowTitle(tr("MOIN") + " - " + tr("Client"));
+    setWindowTitle(tr("Moin") + " - " + tr("Client"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/moin"));
     setWindowIcon(QIcon(":icons/moin"));
@@ -106,6 +108,8 @@ MoinGUI::MoinGUI(QWidget *parent):
 
     // Create the tray icon (or setup the dock icon)
     createTrayIcon();
+
+    signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
     rpcConsole = new RPCConsole(this);
 
@@ -178,14 +182,14 @@ void MoinGUI::createActions()
     quitAction->setToolTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
-    aboutAction = new QAction(QIcon(":/icons/bitcoin"), tr("&About MOIN"), this);
-    aboutAction->setToolTip(tr("Show information about MOIN"));
+    aboutAction = new QAction(QIcon(":/icons/bitcoin"), tr("&About Moin"), this);
+    aboutAction->setToolTip(tr("Show information about Moin"));
     aboutAction->setMenuRole(QAction::AboutRole);
     aboutQtAction = new QAction(QIcon(":/trolltech/qmessagebox/images/qtlogo-64.png"), tr("About &Qt"), this);
     aboutQtAction->setToolTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
     optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options..."), this);
-    optionsAction->setToolTip(tr("Modify configuration options for MOIN"));
+    optionsAction->setToolTip(tr("Modify configuration options for Moin"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     toggleHideAction = new QAction(QIcon(":/icons/bitcoin"), tr("&Show / Hide"), this);
     encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
@@ -199,6 +203,8 @@ void MoinGUI::createActions()
     unlockWalletAction->setToolTip(tr("Unlock wallet"));
     lockWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Lock Wallet"), this);
     lockWalletAction->setToolTip(tr("Lock wallet"));
+    signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message..."), this);
+    verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
 
     //exportAction = new QAction(QIcon(":/icons/export"), tr("&Export..."), this);
     //exportAction->setToolTip(tr("Export the data in the current tab to a file"));
@@ -215,6 +221,8 @@ void MoinGUI::createActions()
     connect(changePassphraseAction, SIGNAL(triggered()), SLOT(changePassphrase()));
     connect(unlockWalletAction, SIGNAL(triggered()), SLOT(unlockWallet()));
     connect(lockWalletAction, SIGNAL(triggered()), SLOT(lockWallet()));
+    connect(signMessageAction, SIGNAL(triggered()), SLOT(gotoSignMessageTab()));
+    connect(verifyMessageAction, SIGNAL(triggered()), SLOT(gotoVerifyMessageTab()));
 }
 
 void MoinGUI::createMenuBar()
@@ -232,6 +240,8 @@ void MoinGUI::createMenuBar()
     QMenu *file = appMenuBar->addMenu(tr("&File"));
     file->addAction(backupWalletAction);
     //file->addAction(exportAction);
+    file->addAction(signMessageAction);
+    file->addAction(verifyMessageAction);
     file->addSeparator();
     file->addAction(quitAction);
 
@@ -262,7 +272,7 @@ void MoinGUI::setClientModel(ClientModel *clientModel)
             if (sMode.length() > 0)
                 sMode[0] = sMode[0].toUpper();
 
-            setWindowTitle(tr("MOIN") + " - " + tr("Wallet") + ", " + sMode);
+            setWindowTitle(tr("Moin") + " - " + tr("Wallet") + ", " + sMode);
         };
 
         // Replace some strings and icons, when using the testnet
@@ -304,6 +314,8 @@ void MoinGUI::setWalletModel(WalletModel *walletModel)
     {
         // Report errors from wallet thread
         connect(walletModel, SIGNAL(error(QString,QString,bool)), this, SLOT(error(QString,QString,bool)));
+
+        signVerifyMessageDialog->setModel(walletModel);
 
         documentFrame->addToJavaScriptWindowObject("walletModel",  walletModel);
         documentFrame->addToJavaScriptWindowObject("optionsModel", walletModel->getOptionsModel());
@@ -351,7 +363,7 @@ void MoinGUI::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIconMenu = new QMenu(this);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setToolTip(tr("MOIN client"));
+    trayIcon->setToolTip(tr("Moin client"));
     trayIcon->setIcon(QIcon(":/icons/moin"));
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
           this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
@@ -366,6 +378,8 @@ void MoinGUI::createTrayIcon()
     // Configuration of the tray icon (or dock icon) icon menu
     trayIconMenu->addAction(toggleHideAction);
     trayIconMenu->addSeparator();
+    trayIconMenu->addAction(signMessageAction);
+    trayIconMenu->addAction(verifyMessageAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(optionsAction);
     trayIconMenu->addAction(openRPCConsoleAction);
@@ -411,7 +425,7 @@ void MoinGUI::setNumConnections(int count)
     default:         icon = "qrc:///icons/connect_6"; break;
     }
     connectionsIcon.setAttribute("src", icon);
-    connectionsIcon.setAttribute("title", tr("%n active connection(s) to MOIN network", "", count));
+    connectionsIcon.setAttribute("title", tr("%n active connection(s) to Moin network", "", count));
 }
 
 void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
@@ -479,7 +493,8 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
 
         tooltip += (tooltip.isEmpty()? "" : "\n")
                  + tr("Downloaded %1 of %2 %3 of transaction history (%4% done).").arg(count).arg(nTotalBlocks).arg(sBlockTypeMulti).arg(nPercentageDone, 0, 'f', 2);
-    } else
+    }
+    else
     {
         tooltip = tr("Downloaded %1 blocks of transaction history.").arg(count);
     }
@@ -532,7 +547,8 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
             outOfSync.setStyleProperty("display", "none");
 
         syncProgressBar.setAttribute("style", "display:none;");
-    } else
+    }
+    else
     {
         tooltip = tr("Catching up...") + "\n" + tooltip;
 
@@ -553,9 +569,9 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
         tooltip += tr("Last received %1 was generated %2.").arg(sBlockType).arg(text);
     };
 
-    blocksIcon     .setAttribute("data-title", tooltip);
-    syncingIcon    .setAttribute("data-title", tooltip);
-    syncProgressBar.setAttribute("data-title", tooltip);
+    blocksIcon     .setAttribute("title", tooltip);
+    syncingIcon    .setAttribute("title", tooltip);
+    syncProgressBar.setAttribute("title", tooltip);
     syncProgressBar.setAttribute("value", QString::number(count));
     syncProgressBar.setAttribute("max",   QString::number(nTotalBlocks));
 }
@@ -566,8 +582,7 @@ void MoinGUI::error(const QString &title, const QString &message, bool modal)
     if(modal)
     {
         QMessageBox::critical(this, title, message, QMessageBox::Ok, QMessageBox::Ok);
-    } else
-    {
+    } else {
         notificator->notify(Notificator::Critical, title, message);
     }
 }
@@ -687,6 +702,24 @@ void MoinGUI::incomingMessage(const QModelIndex & parent, int start, int end)
     };
 }
 
+void MoinGUI::gotoSignMessageTab(QString addr)
+{
+    // call show() in showTab_SM()
+    signVerifyMessageDialog->showTab_SM(true);
+
+    if(!addr.isEmpty())
+        signVerifyMessageDialog->setAddress_SM(addr);
+}
+
+void MoinGUI::gotoVerifyMessageTab(QString addr)
+{
+    // call show() in showTab_VM()
+    signVerifyMessageDialog->showTab_VM(true);
+
+    if(!addr.isEmpty())
+        signVerifyMessageDialog->setAddress_VM(addr);
+}
+
 void MoinGUI::optionsClicked()
 {
     bridge->triggerElement("#navitems a[href=#options]", "click");
@@ -773,19 +806,7 @@ void MoinGUI::setEncryptionStatus(int status)
         toggleLockIcon.removeClass("fa-unlock");
         toggleLockIcon.   addClass("fa-lock");
         encryptionIcon   .setAttribute("src", "qrc:///icons/lock_open");
-        
-        if (fWalletUnlockStakingOnly)
-        {
-            encryptionIcon   .setAttribute("data-title", tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for staking only"));
-            encryptionIcon.removeClass("red");
-            encryptionIcon.addClass("orange");
-        } else
-        {
-            encryptionIcon   .setAttribute("data-title", tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
-            encryptionIcon.addClass("red");
-            encryptionIcon.removeClass("orange");
-        };
-        
+        encryptionIcon   .setAttribute("title", tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         encryptButton.addClass("none");
         changePassphrase.removeClass("none");
         toggleLock.removeClass("none");
@@ -801,10 +822,7 @@ void MoinGUI::setEncryptionStatus(int status)
         encryptionIcon.   addClass("fa-lock");
         toggleLockIcon.removeClass("fa-lock");
         toggleLockIcon.   addClass("fa-unlock");
-        encryptionIcon   .setAttribute("data-title", tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
-
-        encryptionIcon.addClass("red");
-        encryptionIcon.removeClass("orange");
+        encryptionIcon   .setAttribute("title", tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
         encryptButton.addClass("none");
         changePassphrase.removeClass("none");
         toggleLock.removeClass("none");
@@ -833,10 +851,8 @@ void MoinGUI::backupWallet()
 {
     QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
     QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
-    if(!filename.isEmpty())
-     {
-        if(!walletModel->backupWallet(filename)) 
-         {
+    if(!filename.isEmpty()) {
+        if(!walletModel->backupWallet(filename)) {
             QMessageBox::warning(this, tr("Backup Failed"), tr("There was an error trying to save the wallet data to the new location."));
         }
     }
@@ -938,6 +954,7 @@ void MoinGUI::updateWeight()
 
 void MoinGUI::updateStakingIcon()
 {
+
     QWebElement stakingIcon = documentFrame->findFirstElement("#stakingIcon");
     uint64_t nNetworkWeight = 0;
 
@@ -975,14 +992,14 @@ void MoinGUI::updateStakingIcon()
             nNetworkWeight /= COIN;
         }
 
-        stakingIcon.setAttribute("data-title", tr("Staking.\nYour weight is %1\nNetwork weight is %2\nExpected time to earn reward is %3").arg(nWeight).arg(nNetworkWeight).arg(text));
+        stakingIcon.setAttribute("title", tr("Staking.\nYour weight is %1\nNetwork weight is %2\nExpected time to earn reward is %3").arg(nWeight).arg(nNetworkWeight).arg(text));
     } else
     {
         stakingIcon.   addClass("not-staking");
         stakingIcon.removeClass("staking");
         //stakingIcon.removeClass("fa-spin"); // TODO: See above TODO...
 
-        stakingIcon.setAttribute("data-title", (nNodeMode == NT_THIN)                   ? tr("Not staking because wallet is in thin mode") : \
+        stakingIcon.setAttribute("title", (nNodeMode == NT_THIN)                   ? tr("Not staking because wallet is in thin mode") : \
                                           (!GetBoolArg("-staking", true))          ? tr("Not staking, staking is disabled")  : \
                                           (pwalletMain && pwalletMain->IsLocked()) ? tr("Not staking because wallet is locked")  : \
                                           (vNodes.empty())                         ? tr("Not staking because wallet is offline") : \

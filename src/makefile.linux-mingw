@@ -66,11 +66,9 @@ OBJS= \
     obj/crypter.o \
     obj/key.o \
     obj/eckey.o \
-    obj/extkey.o \
     obj/db.o \
     obj/init.o \
     obj/moind.o \
-    obj/irc.o \
     obj/keystore.o \
     obj/miner.o \
     obj/main.o \
@@ -86,7 +84,6 @@ OBJS= \
     obj/rpcblockchain.o \
     obj/rpcrawtransaction.o \
     obj/rpcsmessage.o \
-    obj/rpcextkey.o \
     obj/script.o \
     obj/sync.o \
     obj/util.o \

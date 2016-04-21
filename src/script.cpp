@@ -17,9 +17,6 @@ using namespace boost;
 #include "main.h"
 #include "sync.h"
 #include "util.h"
-#include "wallet.h"
-
-CScriptID::CScriptID(const CScript& in) : uint160(Hash160(in.begin(), in.end())) {}
 
 bool CheckSig(vector<unsigned char> vchSig, const vector<unsigned char> &vchPubKey, const CScript &scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType, int flags);
 
@@ -371,6 +368,7 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
     if (script.size() > 10000)
         return false;
     int nOpCount = 0;
+
 
     try
     {
@@ -834,7 +832,6 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                     valtype& vch1 = stacktop(-2);
                     valtype& vch2 = stacktop(-1);
                     bool fEqual = (vch1 == vch2);
-
                     // OP_NOTEQUAL is disabled because it would be too easy to say
                     // something like n != 1 and have some wiseguy pass in 1 with extra
                     // zero bytes after it (numerically, 0x01 == 0x0001 == 0x000001)
@@ -1005,7 +1002,6 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                     // (in -- hash)
                     if (stack.size() < 1)
                         return false;
-
                     valtype& vch = stacktop(-1);
                     valtype vchHash((opcode == OP_RIPEMD160 || opcode == OP_SHA1 || opcode == OP_HASH160) ? 20 : 32);
                     if (opcode == OP_RIPEMD160)
@@ -1055,8 +1051,8 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                     if ((flags & SCRIPT_VERIFY_STRICTENC) && (!CheckSignatureEncoding(vchSig) || !CheckPubKeyEncoding(vchPubKey)))
                         return false;
 
-                   bool fSuccess = CheckSig(vchSig, vchPubKey, scriptCode, txTo, nIn, nHashType, flags);
-
+                    bool fSuccess = CheckSignatureEncoding(vchSig) && CheckPubKeyEncoding(vchPubKey) &&
+                        CheckSig(vchSig, vchPubKey, scriptCode, txTo, nIn, nHashType, flags);
 
                     popstack(stack);
                     popstack(stack);
@@ -1119,8 +1115,8 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
                             return false;
 
                         // Check signature
-                        bool fOk = CheckSig(vchSig, vchPubKey, scriptCode, txTo, nIn, nHashType, flags);
-
+                        bool fOk = CheckSignatureEncoding(vchSig) && CheckPubKeyEncoding(vchPubKey) &&
+                            CheckSig(vchSig, vchPubKey, scriptCode, txTo, nIn, nHashType, flags);
 
                         if (fOk)
                         {
@@ -1184,6 +1180,7 @@ bool EvalScript(vector<vector<unsigned char> >& stack, const CScript& script, co
 
     return true;
 }
+
 
 
 
@@ -1476,13 +1473,13 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
 }
 
 
-static bool Sign1(const CKeyID& address, const CKeyStore& keystore, uint256 hash, int nHashType, CScript& scriptSigRet)
+bool Sign1(const CKeyID& address, const CKeyStore& keystore, uint256 hash, int nHashType, CScript& scriptSigRet)
 {
     CKey key;
     if (!keystore.GetKey(address, key))
         return false;
 
-    std::vector<unsigned char> vchSig;
+    vector<unsigned char> vchSig;
     if (!key.Sign(hash, vchSig))
         return false;
     vchSig.push_back((unsigned char)nHashType);
@@ -1491,7 +1488,7 @@ static bool Sign1(const CKeyID& address, const CKeyStore& keystore, uint256 hash
     return true;
 }
 
-static bool SignN(const std::vector<valtype>& multisigdata, const CKeyStore& keystore, uint256 hash, int nHashType, CScript& scriptSigRet)
+bool SignN(const vector<valtype>& multisigdata, const CKeyStore& keystore, uint256 hash, int nHashType, CScript& scriptSigRet)
 {
     int nSigned = 0;
     int nRequired = multisigdata.front()[0];
@@ -1511,12 +1508,12 @@ static bool SignN(const std::vector<valtype>& multisigdata, const CKeyStore& key
 // unless whichTypeRet is TX_SCRIPTHASH, in which case scriptSigRet is the redemption script.
 // Returns false if scriptPubKey could not be completely satisfied.
 //
-static bool Solver(const CKeyStore& keystore, const CScript& scriptPubKey, uint256 hash, int nHashType,
+bool Solver(const CKeyStore& keystore, const CScript& scriptPubKey, uint256 hash, int nHashType,
                   CScript& scriptSigRet, txnouttype& whichTypeRet)
 {
     scriptSigRet.clear();
 
-    std::vector<valtype> vSolutions;
+    vector<valtype> vSolutions;
     if (!Solver(scriptPubKey, whichTypeRet, vSolutions))
         return false;
 
@@ -1591,6 +1588,80 @@ bool IsStandard(const CScript& scriptPubKey, txnouttype& whichType)
     return whichType != TX_NONSTANDARD;
 }
 
+
+unsigned int HaveKeys(const vector<valtype>& pubkeys, const CKeyStore& keystore)
+{
+    unsigned int nResult = 0;
+    BOOST_FOREACH(const valtype& pubkey, pubkeys)
+    {
+        CKeyID keyID = CPubKey(pubkey).GetID();
+        if (keystore.HaveKey(keyID))
+            ++nResult;
+    }
+    return nResult;
+}
+
+
+class CKeyStoreIsMineVisitor : public boost::static_visitor<bool>
+{
+private:
+    const CKeyStore *keystore;
+public:
+    CKeyStoreIsMineVisitor(const CKeyStore *keystoreIn) : keystore(keystoreIn) { }
+    bool operator()(const CNoDestination &dest) const { return false; }
+    bool operator()(const CKeyID &keyID) const { return keystore->HaveKey(keyID); }
+    bool operator()(const CScriptID &scriptID) const { return keystore->HaveCScript(scriptID); }
+    bool operator()(const CStealthAddress &stxAddr) const
+    {
+        return stxAddr.scan_secret.size() == ec_secret_size;
+    }
+};
+
+bool IsMine(const CKeyStore &keystore, const CTxDestination &dest)
+{
+    return boost::apply_visitor(CKeyStoreIsMineVisitor(&keystore), dest);
+}
+
+bool IsMine(const CKeyStore &keystore, const CScript& scriptPubKey)
+{
+    vector<valtype> vSolutions;
+    txnouttype whichType;
+    if (!Solver(scriptPubKey, whichType, vSolutions))
+        return false;
+
+    CKeyID keyID;
+    switch (whichType)
+    {
+    case TX_NONSTANDARD:
+    case TX_NULL_DATA:
+        return false;
+    case TX_PUBKEY:
+        keyID = CPubKey(vSolutions[0]).GetID();
+        return keystore.HaveKey(keyID);
+    case TX_PUBKEYHASH:
+        keyID = CKeyID(uint160(vSolutions[0]));
+        return keystore.HaveKey(keyID);
+    case TX_SCRIPTHASH:
+    {
+        CScript subscript;
+        if (!keystore.GetCScript(CScriptID(uint160(vSolutions[0])), subscript))
+            return false;
+        return IsMine(keystore, subscript);
+    }
+    case TX_MULTISIG:
+    {
+        // Only consider transactions "mine" if we own ALL the
+        // keys involved. multi-signature transactions that are
+        // partially owned (somebody else has a key that can spend
+        // them) enable spend-out-from-under-you attacks, especially
+        // in shared-wallet situations.
+        vector<valtype> keys(vSolutions.begin()+1, vSolutions.begin()+vSolutions.size()-1);
+        return HaveKeys(keys, keystore) == keys.size();
+    }
+    }
+    return false;
+}
+
 bool ExtractDestination(const CScript& scriptPubKey, CTxDestination& addressRet)
 {
     vector<valtype> vSolutions;
@@ -1646,12 +1717,7 @@ public:
             Process(script);
     }
     
-    void operator()(const CStealthAddress &sxAddr) {
-        CScript script;
-
-    }
-
-    void operator()(const CExtKeyPair &ek) {
+    void operator()(const CStealthAddress &stxAddr) {
         CScript script;
         
     }
@@ -1706,10 +1772,8 @@ bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, const C
 
     stackCopy = stack;
 
-
     if (!EvalScript(stack, scriptPubKey, txTo, nIn, flags, nHashType))
         return false;
-
     if (stack.empty())
         return false;
 
@@ -1717,7 +1781,7 @@ bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, const C
         return false;
 
     // Additional validation for spend-to-script-hash transactions:
-    if ((flags & SCRIPT_VERIFY_P2SH) && scriptPubKey.IsPayToScriptHash())
+    if (scriptPubKey.IsPayToScriptHash())
     {
         if (!scriptSig.IsPushOnly()) // scriptSig must be literals-only
             return false;            // or validation fails
@@ -1732,6 +1796,7 @@ bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, const C
             return false;
         return CastToBool(stackCopy.back());
     }
+
     return true;
 }
 
@@ -1776,7 +1841,7 @@ bool SignSignature(const CKeyStore &keystore, const CTransaction& txFrom, CTrans
     assert(nIn < txTo.vin.size());
     CTxIn& txin = txTo.vin[nIn];
     assert(txin.prevout.n < txFrom.vout.size());
-
+    assert(txin.prevout.hash == txFrom.GetHash());
     const CTxOut& txout = txFrom.vout[txin.prevout.n];
 
     return SignSignature(keystore, txout.scriptPubKey, txTo, nIn, nHashType);
@@ -2027,14 +2092,10 @@ public:
         return true;
     }
     
-    bool operator()(const CStealthAddress &sxAddr) const {
+    bool operator()(const CStealthAddress &stxAddr) const {
         script->clear();
+        //*script << OP_HASH160 << scriptID << OP_EQUAL;
         LogPrintf("CScriptVisitor(CStealthAddress) TODO\n");
-        return false;
-    }
-    bool operator()(const CExtKeyPair &ek) const {
-        script->clear();
-        LogPrintf("CScriptVisitor(CExtKeyPair) TODO\n");
         return false;
     }
 };
@@ -2173,15 +2234,4 @@ bool CScriptCompressor::Decompress(unsigned int nSize, const std::vector<unsigne
         return true;
     }
     return false;
-}
-
-CScript GetScriptForMultisig(int nRequired, const std::vector<CPubKey>& keys)
-{
-    CScript script;
-
-        script << CScript::EncodeOP_N(nRequired);
-        BOOST_FOREACH(const CPubKey& key, keys)
-            script << ToByteVector(key);
-            script << CScript::EncodeOP_N(keys.size()) << OP_CHECKMULTISIG;
-    return script;
 }
