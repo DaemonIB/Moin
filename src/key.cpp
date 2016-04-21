@@ -86,6 +86,34 @@ bool CKey::CheckSignatureElement(const unsigned char *vch, int len, bool half)
            CompareBigEndian(vch, len, half ? vchMaxModHalfOrder : vchMaxModOrder, 32) <= 0;
 }
 
+bool CKey::ReserealizeSignature(std::vector<unsigned char>& vchSig)
+{
+    unsigned char *pos;
+
+    if (vchSig.empty())
+        return false;
+
+    pos = &vchSig[0];
+    ECDSA_SIG *sig = d2i_ECDSA_SIG(NULL, (const unsigned char **)&pos, vchSig.size());
+    if (sig == NULL)
+        return false;
+
+    bool ret = false;
+    int nSize = i2d_ECDSA_SIG(sig, NULL);
+    if (nSize > 0)
+    {
+        vchSig.resize(nSize); // grow or shrink as needed
+
+        pos = &vchSig[0];
+        i2d_ECDSA_SIG(sig, &pos);
+
+        ret = true;
+    }
+
+    ECDSA_SIG_free(sig);
+    return ret;
+}
+
 void CKey::MakeNewKey(bool fCompressedIn)
 {
     do {
@@ -270,7 +298,7 @@ bool CKey::Derive(CKey& keyChild, unsigned char ccChild[32], unsigned int nChild
         assert(begin() + 32 == end());
         BIP32Hash(cc, nChild, 0, begin(), out);
     };
-    
+
     memcpy(ccChild, out+32, 32);
     bool ret = TweakSecret((unsigned char*)keyChild.begin(), begin(), out);
     UnlockObject(out);
@@ -351,7 +379,7 @@ CExtPubKey CExtKey::Neutered() const
     ret.nDepth = nDepth;
     memcpy(&ret.vchFingerprint[0], &vchFingerprint[0], 4);
     ret.nChild = nChild;
-    ret.pubkey = key.GetPubKey(true);
+    ret.pubkey = key.GetPubKey();
     memcpy(&ret.vchChainCode[0], &vchChainCode[0], 32);
     return ret;
 }
@@ -401,7 +429,7 @@ bool CExtPubKey::Derive(CExtPubKey &out, unsigned int nChild) const
 {
     out.nDepth = nDepth + 1;
     CKeyID id = pubkey.GetID();
-    
+
     memcpy(&out.vchFingerprint[0], &id, 4);
     out.nChild = nChild;
     return pubkey.Derive(out.pubkey, out.vchChainCode, nChild, vchChainCode);
@@ -429,7 +457,7 @@ void CExtKeyPair::DecodeV(const unsigned char code[74])
     nChild = (code[5] << 24) | (code[6] << 16) | (code[7] << 8) | code[8];
     memcpy(vchChainCode, code+9, 32);
     key.Set(code+42, code+74, true);
-    pubkey = key.GetPubKey(true);
+    pubkey = key.GetPubKey();
 };
 
 void CExtKeyPair::EncodeP(unsigned char code[74]) const
@@ -485,7 +513,7 @@ bool CExtKeyPair::Derive(CExtPubKey &out, unsigned int nChild) const
     if (!key.Derive(tkey, out.vchChainCode, nChild, vchChainCode))
         return false;
     
-    out.pubkey = tkey.GetPubKey(true);
+    out.pubkey = tkey.GetPubKey();
     return true;
 };
 
@@ -511,7 +539,7 @@ bool CExtKeyPair::Derive(CPubKey &out, unsigned int nChild) const
     CKey tkey;
     if (!key.Derive(tkey, temp, nChild, vchChainCode))
         return false;
-    out = tkey.GetPubKey(true);
+    out = tkey.GetPubKey();
     return true;
 };
 
@@ -548,7 +576,7 @@ void CExtKeyPair::SetMaster(const unsigned char *seed, unsigned int nSeedLen)
     LockObject(out);
     HMAC_SHA512_Final(out, &ctx);
     key.Set(&out[0], &out[32], true);
-    pubkey = key.GetPubKey(true);
+    pubkey = key.GetPubKey();
     memcpy(vchChainCode, &out[32], 32);
     UnlockObject(out);
     nDepth = 0;
@@ -559,7 +587,7 @@ void CExtKeyPair::SetMaster(const unsigned char *seed, unsigned int nSeedLen)
 int CExtKeyPair::SetKeyCode(const unsigned char *pkey, const unsigned char *pcode)
 {
     key.Set(pkey, true);
-    pubkey = key.GetPubKey(true);
+    pubkey = key.GetPubKey();
     memcpy(vchChainCode, pcode, 32);
     nDepth = 0;
     nChild = 0;

@@ -88,6 +88,10 @@ Value getmininginfo(const Array& params, bool fHelp)
     obj.push_back(Pair("stakeweight",           weight));
 
     obj.push_back(Pair("stakeinterest",         (uint64_t)COIN_YEAR_REWARD));
+    obj.push_back(Pair("stakeinterest",         (uint64_t)MCOIN_YEAR_REWARD));
+    obj.push_back(Pair("stakeinterest",         (uint64_t)OCOIN_YEAR_REWARD));
+    obj.push_back(Pair("stakeinterest",         (uint64_t)ICOIN_YEAR_REWARD));
+    obj.push_back(Pair("stakeinterest",         (uint64_t)NCOIN_YEAR_REWARD));
     obj.push_back(Pair("testnet",               fTestNet));
     return obj;
 }
@@ -135,10 +139,10 @@ Value getworkex(const Array& params, bool fHelp)
         );
 
     if (vNodes.empty())
-        throw JSONRPCError(-9, "ShadowCoin is not connected!");
+        throw JSONRPCError(-9, "Moin is not connected!");
 
     if (IsInitialBlockDownload())
-        throw JSONRPCError(-10, "ShadowCoin is downloading blocks...");
+        throw JSONRPCError(-10, "Moin is downloading blocks...");
 
     if (pindexBest->nHeight >= Params().LastPOWBlock())
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
@@ -271,10 +275,10 @@ Value getwork(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_MISC_ERROR, "Not running as a full node!");
     
     if (vNodes.empty())
-        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "ShadowCoin is not connected!");
+        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Moin is not connected!");
 
     if (IsInitialBlockDownload())
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "ShadowCoin is downloading blocks...");
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Moin is downloading blocks...");
 
     if (pindexBest->nHeight >= Params().LastPOWBlock())
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
@@ -417,10 +421,10 @@ Value getblocktemplate(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");
 
     if (vNodes.empty())
-        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "ShadowCoin is not connected!");
+        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Moin is not connected!");
 
     if (IsInitialBlockDownload())
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "ShadowCoin is downloading blocks...");
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Moin is downloading blocks...");
 
     if (pindexBest->nHeight >= Params().LastPOWBlock())
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");

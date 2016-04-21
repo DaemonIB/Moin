@@ -1,4 +1,4 @@
-// Shadow HTML5 main.js
+// Moin HTML5 main.js
 
 $("[href='#qrcode-modal']").leanModal({top : 10, overlay : 0.5, closeButton: "#qrcode-modal .modal_close"});
 $("#start-conversation").leanModal({top : 200, overlay : 0.5, closeButton: "#new-contact-modal .modal_close"});
@@ -8,10 +8,8 @@ $("#sign-addlkp-btn").leanModal({  top : 110, overlay : 1,  zindex:11001, closeB
 $("#verify-addlkp-btn").leanModal({ top : 110, overlay : 1, zindex:11001, closeButton: "#address-lookup-modal .modal_close", childPopup: true});
 $("#verify-message-button").leanModal({top : 50, overlay : 0.5, closeButton: "#verify-sign-modal .modal_close"});
 $("#sign-message-button").leanModal({top : 50, overlay : 0.5, closeButton: "#verify-sign-modal .modal_close"});
-$("#import-key-button").leanModal({top : 50, overlay : 0.5, closeButton: "#import-key-modal .modal_close"});
 
-
-var qrcode = new QRCode("qrcode", {colorDark:'#E51C39', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H, width: 220, height: 220,});
+var qrcode = new QRCode("qrcode", {colorDark:'#0cb3db', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H, width: 220, height: 220,});
 
 function showQRCode(address, label) {
 
@@ -24,7 +22,7 @@ function showQRCode(address, label) {
     qrcode.clear();
 
     var textarea = $("#qrcode-data"),
-        data = "shadowcoin:";
+        data = "moin:";
 
     data += $("#qraddress").val()
           + "?label="     + $("#qrlabel").val()
@@ -132,9 +130,10 @@ $(function() {
     receivePageInit();
     transactionPageInit();
     addressBookInit();
-    shadowChatInit();
+    ChatInit();
     chainDataPage.init();
-    keyManagementPage.init();
+    blockExplorerPage.init();
+
     // Tooltip
     $('[data-title]').on('mouseenter', tooltip);
 
@@ -308,7 +307,7 @@ var base58 = {
 
         for (var i = 0, len = value.length; i < len; ++i)
             if (base58.base58Chars.indexOf(value[i]) == -1) {
-                el.css("background", "#E51C39").css("color", "white");
+                el.css("background", "#0cb3db").css("color", "white");
                 return false;
             }
 
@@ -379,29 +378,29 @@ function networkAlert(alert) {
 
 var unit = {
     type: 0,
-    name: "SDC",
-    display: "SDC",
+    name: "MOIN",
+    display: "MOIN",
     setType: function(type) {
         this.type = (type == undefined ? 0 : type);
 
         switch(type) {
             case 1:
-                this.name = "mSDC",
-                this.display = "mSDC";
+                this.name = "mMOIN",
+                this.display = "mMOIN";
                 break;
 
             case 2:
-                this.name = "uSDC",
-                this.display = "&micro;SDC";
+                this.name = "uMOIN",
+                this.display = "&micro;MOIN";
                 break;
 
             case 3:
-                this.name    = "sSDC",
-                this.display = "Shadowshi";
+                this.name    = "sMOIN",
+                this.display = "Moinoshi";
                 break;
 
             default:
-                this.name = this.display = "SDC";
+                this.name = this.display = "MOIN";
         }
 
         $("td.unit,span.unit,div.unit").html(this.display);
@@ -547,7 +546,7 @@ function openContextMenu(el)
 var overviewPage = {
     init: function() {
         this.balance = $(".balance"),
-        this.shadowBal = $(".shadow_balance"),
+        this.moinXBal = $("#moinXBal"),
         this.reserved = $("#reserved"),
         this.stake = $("#stake"),
         this.unconfirmed = $("#unconfirmed"),
@@ -556,7 +555,7 @@ var overviewPage = {
 
         // Announcement feed
         $.ajax({
-            url:"http://ajax.googleapis.com/ajax/services/feed/load?v=2.0\&q=https://blog.shadowproject.io/rss/",
+            url:"http://ajax.googleapis.com/ajax/services/feed/load?v=2.0&q=http://blog.discovermoin.com/rss/atom",
             dataType: 'jsonp'
         }).success(function(rss) {
             rss.responseData.feed.entries = rss.responseData.feed.entries.sort(function(a,b){
@@ -564,19 +563,15 @@ var overviewPage = {
             });
             for(i=0;i<rss.responseData.feed.entries.length;i++) {
                 $('#announcements').append("<h4><a href='" + rss.responseData.feed.entries[i].link  + "'>" + rss.responseData.feed.entries[i].title + "</a></h4>"
-                                         + "<div>"
-                                         + rss.responseData.feed.entries[i].contentSnippet
-                                         + "</div>"
-                                         + "<br>"
                                          + "<span>"
-                                         + new Date(rss.responseData.feed.entries[i].publishedDate).toDateString()
+                                             +      new Date(rss.responseData.feed.entries[i].publishedDate).toDateString()
                                          + "</span>");
             }
         });
 
         var menu = [{
                 name: 'Backup&nbsp;Wallet...',
-                fa: 'fa-save red fa-fw font-20px',
+                fa: 'fa-save red fa-fw',
                 fun: function () {
                    bridge.userAction(['backupWallet']);
                 }
@@ -590,22 +585,22 @@ var overviewPage = {
                 }, */
                 {
                     name: 'Sign&nbsp;Message...',
-                    fa: 'fa-pencil-square-o red fa-fw font-20px',
+                    fa: 'fa-pencil-square-o red fa-fw',
                     fun: function () {
-
-                       $('#sign-message-button').click();
+                    
+                    $('#sign-message-button').click();
                     }
                 },
                 {
                     name: 'Verify&nbsp;Message...',
-                    fa: 'fa-check red fa-fw font-20px',
+                    fa: 'fa-check red fa-fw',
                     fun: function () {
-                        $('#verify-message-button').click();
+                       $('#verify-message-button').click();
                     }
                 },
                 {
                     name: 'Exit',
-                    fa: 'fa-times red fa-fw font-20px',
+                    fa: 'fa-times red fa-fw',
                     fun: function () {
                        bridge.userAction(['close']);
                     }
@@ -616,7 +611,7 @@ var overviewPage = {
         menu = [{
                      id: 'encryptWallet',
                      name: 'Encrypt&nbsp;Wallet...',
-                     fa: 'fa-lock red fa-fw font-20px',
+                     fa: 'fa-lock red fa-fw',
                      fun: function () {
                         bridge.userAction(['encryptWallet']);
                      }
@@ -624,7 +619,7 @@ var overviewPage = {
                  {
                      id: 'changePassphrase',
                      name: 'Change&nbsp;Passphrase...',
-                     fa: 'fa-user-secret red fa-fw font-20px',
+                     fa: 'fa-key red fa-fw',
                      fun: function () {
                         bridge.userAction(['changePassphrase']);
                      }
@@ -632,23 +627,58 @@ var overviewPage = {
                  {
                      id: 'toggleLock',
                      name: '(Un)Lock&nbsp;Wallet...',
-                     fa: 'fa-unlock red pad fa-fw font-20px',
+                     fa: 'fa-unlock red pad fa-fw',
                      fun: function () {
                         bridge.userAction(['toggleLock']);
                      }
                  },
                  {
-                     name: 'Key Management',
-                     fa: 'fa-key red fa-fw font-20px',
+                     name: 'Options',
+                     fa: 'fa-wrench red fa-fw',
                      fun: function () {
-                        $("#navitems [href=#keymanagement]").click();
+                        $("#navitems [href=#options]").click();
+                 		}
+                    },
+                {
+					name: 'Backup&nbsp;Wallet...',
+					fa: 'fa-save red fa-fw',
+					fun: function () {
+                   bridge.userAction(['backupWallet']);
+				}
+                    },
+                {
+                    name: 'Sign&nbsp;Message...',
+                    fa: 'fa-pencil-square-o red fa-fw',
+                    fun: function () {
+                       bridge.userAction({'signMessage': $('#receive .footable .selected .address').text()});
+                    }
+                },
+                {
+                    name: 'Verify&nbsp;Message...',
+                    fa: 'fa-check red fa-fw',
+                    fun: function () {
+                       bridge.userAction({'verifyMessage': $('#addressbook .footable .selected .address').text()});
+                    }
+                },
+                {				
+				     name: 'Debug&nbsp;Window...',
+                     fa: 'fa-bug red fa-fw',
+                     fun: function () {
+                        bridge.userAction(['debugClicked']);
+					}
+                },
+                {
+                     name: ' About&nbsp;Moin',
+                     fa: 'fa-caret-up red fa-fw',
+                     fun: function () {
+                        bridge.userAction(['aboutClicked']);
                      }
                  },
                  {
-                     name: 'Options',
-                     fa: 'fa-wrench red fa-fw font-20px',
+                     name: 'About&nbsp;Qt',
+                     fa: 'fa-question red fa-fw',
                      fun: function () {
-                        $("#navitems [href=#options]").click();
+                        bridge.userAction(['aboutQtClicked']);
                      }
                  }];
 
@@ -656,28 +686,28 @@ var overviewPage = {
 
         menu = [{
                      name: 'Debug&nbsp;Window...',
-                     fa: 'fa-bug red fa-fw font-20px',
+                     fa: 'fa-bug red fa-fw',
                      fun: function () {
                         bridge.userAction(['debugClicked']);
                      }
                  },
                  {
                      name: 'Developer&nbsp;Tools...',
-                     fa: 'fa-edit red fa-fw font-20px',
+                     fa: 'fa-edit red fa-fw',
                      fun: function () {
                         bridge.userAction(['developerConsole']);
                      }
                  },
                  {
-                     name: ' About&nbsp;Shadow...',
-                     img: 'qrc:///icons/shadow',
+                     name: ' About&nbsp;Moin...',
+                     img: 'qrc:///icons/moin',
                      fun: function () {
                         bridge.userAction(['aboutClicked']);
                      }
                  },
                  {
                      name: 'About&nbsp;Qt...',
-                     fa: 'fa-question red fa-fw font-20px',
+                     fa: 'fa-question red fa-fw',
                      fun: function () {
                         bridge.userAction(['aboutQtClicked']);
                      }
@@ -686,22 +716,22 @@ var overviewPage = {
         $('#help').contextMenu(menu, {onOpen:function(data,e){openContextMenu(data.menu);}, onClose:function(data,e){data.menu.isOpen = 0;}, triggerOn: 'click', displayAround: 'trigger', position: 'bottom', mouseClick: 'left', sizeStyle: 'content'});
     },
 
-    updateBalance: function(balance, shadowBal, stake, unconfirmed, immature) {
+    updateBalance: function(balance, moinXBal, stake, unconfirmed, immature) {
         if(balance == undefined)
             balance     = this.balance    .data("orig"),
-            shadowBal   = this.shadowBal  .data("orig"),
+            moinXBal   = this.moinXBal  .data("orig"),
             stake       = this.stake      .data("orig"),
             unconfirmed = this.unconfirmed.data("orig"),
             immature    = this.immature   .data("orig");
         else
             this.balance    .data("orig", balance),
-            this.shadowBal  .data("orig", shadowBal),
+            this.moinXBal  .data("orig", moinXBal),
             this.stake      .data("orig", stake),
             this.unconfirmed.data("orig", unconfirmed),
             this.immature   .data("orig", immature);
 
         this.formatValue("balance",     balance);
-        this.formatValue("shadowBal",   shadowBal);
+        this.formatValue("moinXBal",   moinXBal);
         this.formatValue("stake",       stake);
         this.formatValue("unconfirmed", unconfirmed);
         this.formatValue("immature",    immature);
@@ -756,8 +786,8 @@ var overviewPage = {
         var format = function(tx) {
 
             return "<a id='"+tx.id.substring(0,17)+"' data-title='"+tx.tt+"' class='transaction-overview' href='#' onclick='$(\"#navitems [href=#transactions]\").click();$(\"#"+tx.id+"\").click();'>\
-                                                <span class='"+(tx.t == 'input' ? 'received' : (tx.t == 'output' ? 'sent' : (tx.t == 'inout' ? 'self' : 'stake')))+" icon no-padding'>\
-                                                  <i class='fa fa-"+(tx.t == 'input' ? 'angle-left' : (tx.t == 'output' ? 'angle-right' : (tx.t == 'inout' ? 'angle-down' : 'money')))+" font-26px margin-right-10'></i>"
+                                                <span class='"+(tx.t == 'input' ? 'received' : (tx.t == 'output' ? 'sent' : (tx.t == 'inout' ? 'self' : 'stake')))+" icon no-padding blue-moin'>\
+                                                  <i class='fa fa-"+(tx.t == 'input' ? 'angle-left' : (tx.t == 'output' ? 'angle-right' : (tx.t == 'inout' ? 'angle-down' : 'caret-up')))+" font-26px margin-right-10'></i>"
                                                 +unit.format(tx.am)+" </span> <span> "+unit.display+" </span> <span class='overview_date' data-value='"+tx.d+"'>"+tx.d_s+"</span></a>";
 
         }
@@ -868,7 +898,7 @@ var optionsPage = {
                         for(var i=0;i<values[prop].length;i++)
                             element.append("<option>" + values[prop][i] + "</option>");
                     } else
-                        element.append("<option" + ($.isNumeric(prop) ? '' : " value='"+prop+"'") + ">" + values[prop] + "</option>");
+                            element.append("<option" + ($.isNumeric(prop) ? '' : " value='"+prop+"'") + ">" + values[prop] + "</option>");
             }
 
             function toggleLinked(el) {
@@ -953,6 +983,7 @@ function sendPageInit() {
 }
 
 var recipients = 0;
+
 var returnto = "";
 function addRecipient() {
 
@@ -961,7 +992,7 @@ function addRecipient() {
         +  '<div id="recipient[count]" class="recipient"> \
             <div class="flex-right"> \
                 <label for="pay_to[count]" class="recipient">Pay To:</label> \
-                <input id="pay_to[count]" class="pay_to input_box" data-title="The address to send the payment to  (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a Shadow address (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" maxlength="128" oninput="base58.check(this);" onchange="$(\'#label[count]\').val(bridge.getAddressLabel(this.value));"/> \
+                <input id="pay_to[count]" class="pay_to input_box" data-title="The address to send the payment to  (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a MOIN address (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" maxlength="128" oninput="base58.check(this);" onchange="$(\'#label[count]\').val(bridge.getAddressLabel(this.value));"/> \
                 <a id="address_lookup[count]" class="button is-inverse has-fixed-icon" data-title="Choose from address book" style="margin-right:10px; margin-left:10px; height:43px; width:43px;" href="#address-lookup-modal" onclick="returnto=\'pay_to[count]\,label[count]\';prepAddressLookup(false); " ><i class="fa fa-book"></i></a> \
                 <a class="button is-inverse has-fixed-icon" data-title="Paste address from clipboard" style="margin-right:10px; height:43px; width:43px;" onclick="paste(\'#pay_to[count]\')"><i class="fa fa-files-o"></i></a> \
                 <a class="button is-inverse has-fixed-icon" data-title="Remove this recipient" style="height:43px; width:43px;" onclick="if($(\'div.recipient\').length == 1) clearRecipients(); else {var recipient=$(\'#recipient[count]\');if(recipient.next(\'hr\').remove().length==0)recipient.prev(\'hr\').remove();$(\'#recipient[count]\').remove();resizeFooter();}"><i class="fa fa-times"></i></a> \
@@ -978,10 +1009,10 @@ function addRecipient() {
                 <label for="amount[count]" class="recipient">Amount:</label> \
                 <input id="amount[count]" class="amount input_box" type="number" placeholder="0.00000000" step="0.01" value="0.00000000" onfocus="invalid($(this), true);" onchange="unit.parse(this, $(\'#unit[count]\').val());updateCoinControl();"  /> \
                 <select id="unit[count]" class="unit button is-inverse has-fixed-icon"  style="margin-left:10px; height:43px; width:100px;" onchange="unit.format(\'#amount[count]\', $(this).val());"> \
-                    <option value="0" title="Shadow"                    ' + (unit.type == 0 ? "selected" : "") + '>SDC</option> \
-                    <option value="1" title="Milli-Shadow (1 / 1000)"   ' + (unit.type == 1 ? "selected" : "") + '>mSDC</option> \
-                    <option value="2" title="Micro-Shadow (1 / 1000000)"' + (unit.type == 2 ? "selected" : "") + '>&micro;SDC</option> \
-                    <option value="3" title="Shadowshi (1 / 100000000)" ' + (unit.type == 3 ? "selected" : "") + '>Shadowshi</option> \
+                    <option value="0" title="Moin"                    ' + (unit.type == 0 ? "selected" : "") + '>MOIN</option> \
+                    <option value="1" title="Milli-Moin (1 / 1000)"   ' + (unit.type == 1 ? "selected" : "") + '>mMOIN</option> \
+                    <option value="2" title="Micro-Moin (1 / 1000000)"' + (unit.type == 2 ? "selected" : "") + '>&micro;MOIN</option> \
+                    <option value="3" title="Moinoshi (1 / 100000000)" ' + (unit.type == 3 ? "selected" : "") + '>Moinoshi</option> \
                 </select> \
             </div> \
         </div>').replace(/\[count\]/g, recipients++));
@@ -1021,15 +1052,22 @@ function changeTxnType()
 
     if (type > 1)
     {
-        $("#tx_ringsize,#suggest_ring_size")[bridge.info.options.AutoRingSize == true ? 'hide' : 'show']();
-        $("#coincontrol,#spend_sdc").hide();
-        $("#spend_shadow").show();
-        toggleCoinControl(false);
+        if(bridge.info.options.AutoRingSize == true)
+        {
+            $("#tx_ringsize").hide();
+            $("#suggest_ring_size").hide();
+        } else
+        {
+            $("#tx_ringsize").show();
+            $("#suggest_ring_size").show();
+        }
+        $("#coincontrol").hide();
     }
     else
     {
-        $("#tx_ringsize,#suggest_ring_size,#spend_shadow").hide();
-        $("#coincontrol,#spend_sdc").show();
+        $("#tx_ringsize").hide();
+        $("#suggest_ring_size").hide();
+        $("#coincontrol").show();
     }
 
     resizeFooter();
@@ -1040,7 +1078,7 @@ function suggestRingSize()
     chainDataPage.updateAnonOutputs();
 
     var minsize = bridge.info.options.MinRingSize||3,
-        maxsize = bridge.info.options.MaxRingSize||50;
+        maxsize = bridge.info.options.MaxRingSize||100;
 
     function mature(value, min_owned) {
         if(min_owned == undefined || !$.isNumeric(min_owned))
@@ -1194,7 +1232,7 @@ var invalid = function(el, valid) {
     if(valid == true)
         el.css("background", "").css("color", "");
     else
-        el.css("background", "#E51C39").css("color", "white");
+        el.css("background", "#0cb3db").css("color", "white");
 
     return (valid == true);
 }
@@ -1267,7 +1305,7 @@ function receivePageInit() {
      }).contextMenu(menu, {triggerOn:'contextmenu', sizeStyle: 'content'});
 
     // Deal with the receive table filtering
-    // On any input update the filter
+    // On any input update the filter 
     $('#filter-address').on('input', function () {
         var receiveTable =  $('#receive-table');
 
@@ -1299,9 +1337,9 @@ function clearRecvAddress()
 function addAddress()
 {
     newAdd = bridge.newAddress($("#new-address-label").val(), $("#new-addresstype").val());
-
+    
     //TODO: Highlight address
-    $("#add-address-modal .modal_close").click();
+    $("#add-address-modal .modal_close").click();    
 }
 
 function clearSendAddress()
@@ -1318,10 +1356,10 @@ function addSendAddress()
 
     sendLabel   = $("#new-send-label").val();
     sendAddress = $("#new-send-address").val();
-
+    
     var addType = 0; // not used
     result = bridge.newAddress(sendLabel, addType, sendAddress, true);
-
+    
     if (result == "")
     {
         var errorMsg = bridge.lastAddressError();
@@ -1394,7 +1432,7 @@ function addressBookInit() {
      }).contextMenu(menu, {triggerOn:'contextmenu', sizeStyle: 'content'});
 
     // Deal with the addressbook table filtering
-    // On any input update the filter
+    // On any input update the filter 
     $('#filter-addressbook').on('input', function () {
         var addressbookTable =  $('#addressbook-table');
 
@@ -1458,8 +1496,9 @@ function appendAddresses(addresses) {
                <td class='address'>"+address.address+"</td>\
                <td class='pubkey'>"+address.pubkey+"</td>\
                <td class='addresstype'>"+(address.at == 3 ? "BIP32" : address.at == 2 ? "Stealth" : "Normal")+"</td></tr>");
-
+            
             $("#"+address.address)
+
             .on('click', function() {
                 $(this).addClass("selected").siblings("tr").removeClass("selected");
             }).find(".editable").on("dblclick", function (event) {
@@ -1469,6 +1508,7 @@ function appendAddresses(addresses) {
         }
         else
         {
+
             $("#"+address.address+" .label") .data("value", address.label_value).text(address.label);
             $("#"+address.address+" .pubkey").text(address.pubkey);
         }
@@ -1482,7 +1522,7 @@ function appendAddresses(addresses) {
 function prepAddressLookup(lReceiveAddresses)
 {
     var page = (lReceiveAddresses ? "#receive" : "#addressbook");
-    var table =  $(page + "-table");
+    var table =  $(page + "-table"); 
     var lookupTable = $("#address-lookup-table");
 
     lookupTable.data().pageSize = 5;
@@ -1499,13 +1539,13 @@ function prepAddressLookup(lReceiveAddresses)
             $("#" + retfields[0]).val( $(this).attr("id").trim() );
             if(retfields[1] != undefined )
             {
-                $("#" + retfields[1]).val( $(this).attr("lbl").trim() );
+                $("#" + retfields[1]).val( $(this).attr("lbl").trim() ); 
             }
             $("#address-lookup-modal .modal_close").click();
         })
 
     // Deal with the lookup table filtering
-    // On any input update the filter
+    // On any input update the filter 
     $('#lookup-addressfilter').on('input', function () {
         if($('#lookup-addressfilter').val() == "")
         {
@@ -1750,9 +1790,9 @@ function appendTransactions(transactions) {
     $("#transactions .footable").trigger("footable_redraw");
 }
 
-function shadowChatInit() {
+function ChatInit() {
     var menu = [{
-            name: 'Send&nbsp;Shadow',
+            name: 'Send&nbsp;Moin',
             fun: function () {
                 clearRecipients();
                 $("#pay_to0").val($('#contact-list .selected .contact-address').text());
@@ -2164,11 +2204,11 @@ function verifyMessage() {
     address = $('#verify-address').val().trim();
     message = $('#verify-message').val().trim();
     signature = $('#verify-signature').val().trim();
-
+    
     var result = bridge.verifyMessage(address, message, signature);
 
     error = result.error_msg;
-
+    
     if(error != "" )
     {
         $('#verify-result').removeClass('green');
@@ -2183,6 +2223,7 @@ function verifyMessage() {
         $('#verify-result').html("Message verified successfully");
     }
 }
+
 
 var contactScroll = new IScroll('#contact-list', {
     mouseWheel: true,
@@ -2288,7 +2329,7 @@ var chainDataPage = {
         $('#chaindata .footable').trigger('footable_initialize');
     }
 }
-var blockExplorerPage =
+var blockExplorerPage = 
 {
     blockHeader: {},
     findBlock: function(searchID) {
@@ -2302,13 +2343,13 @@ var blockExplorerPage =
             blockExplorerPage.foundBlock = bridge.findBlock(searchID);
 
             if(blockExplorerPage.foundBlock.error_msg != '' )
-            {
+            { 
                 $('#latest-blocks-table  > tbody').html('');
                 $("#block-txs-table > tbody").html('');
                 $("#block-txs-table").addClass("none");
                 alert(blockExplorerPage.foundBlock.error_msg);
                 return false;
-            }
+            } 
 
             var tbody = $('#latest-blocks-table  > tbody');
             tbody.html('');
@@ -2321,12 +2362,12 @@ var blockExplorerPage =
                                      <td>'+blockExplorerPage.foundBlock.block_height+'</td>\
                                      <td>'+blockExplorerPage.foundBlock.block_timestamp+'</td>\
                                      <td>'+blockExplorerPage.foundBlock.block_transactions+'</td>\
-                        </tr>');
+                        </tr>'); 
             blockExplorerPage.prepareBlockTable();
         }
-        // Keeping this just in case - Will remove if not used
+        // Keeping this just in case - Will remove if not used 
     },
-    updateLatestBlocks: function()
+    updateLatestBlocks: function() 
     {
         blockExplorerPage.latestBlocks = bridge.listLatestBlocks();
         var txnTable = $('#block-txs-table  > tbody');
@@ -2343,7 +2384,7 @@ var blockExplorerPage =
                          <td>' +  latestBlock.block_height + '</td>\
                          <td>' +  latestBlock.block_timestamp   + '</td>\
                          <td>' +  latestBlock.block_transactions+ '</td>\
-                         </tr>');
+                         </tr>'); 
         }
         blockExplorerPage.prepareBlockTable();
     },
@@ -2351,8 +2392,8 @@ var blockExplorerPage =
     {
         $("#latest-blocks-table  > tbody tr")
             .on('click', function()
-                {
-                    $(this).addClass("selected").siblings("tr").removeClass("selected");
+                { 
+                    $(this).addClass("selected").siblings("tr").removeClass("selected"); 
                     var blkHash = $(this).attr("data-value").trim();
                     blockExplorerPage.blkTxns = bridge.listTransactionsForBlock(blkHash);
                     var txnTable = $('#block-txs-table  > tbody');
@@ -2364,10 +2405,10 @@ var blockExplorerPage =
                         txnTable.append('<tr data-value='+blkTx.transaction_hash+'>\
                                     <td>' +  blkTx.transaction_hash  + '</td>\
                                     <td>' +  blkTx.transaction_value + '</td>\
-                                    </tr>');
+                                    </tr>'); 
                     }
-
                     $("#block-txs-table").removeClass("none");
+
                     $("#block-txs-table > tbody tr")
                         .on('click', function() {
                             $(this).addClass("selected").siblings("tr").removeClass("selected");
@@ -2389,7 +2430,7 @@ var blockExplorerPage =
                                 $("#txn-blkhash").html(selectedTxn.transaction_block_hash);
                                 $("#txn-reward").html(selectedTxn.transaction_reward);
                                 $("#txn-confirmations").html(selectedTxn.transaction_confirmations);
-                                $("#txn-value").html(selectedTxn.transaction_value);
+                                $("#txn-value").html(selectedTxn.transaction_value);            
                                 $("#error-msg").html(selectedTxn.error_msg);
 
                                 if(selectedTxn.transaction_reward > 0)
@@ -2403,20 +2444,19 @@ var blockExplorerPage =
                                     $("#txn-reward").html(selectedTxn.transaction_reward * -1);
                                 }
                             }
-
+                            
                             var txnInputs = $('#txn-detail-inputs > tbody');
                             txnInputs.html('');
-                            for (value in selectedTxn.transaction_inputs)
-                            {
+                            for (value in selectedTxn.transaction_inputs) {
 
-
-
+                              
+                              
                               var txnInput = selectedTxn.transaction_inputs[value];
 
                               txnInputs.append('<tr data-value='+ txnInput.input_source_address+'>\
                                                            <td>' + txnInput.input_source_address  + '</td>\
                                                            <td>' + txnInput.input_value + '</td>\
-                                                </tr>');
+                                                </tr>'); 
                             }
 
                             var txnOutputs = $('#txn-detail-outputs > tbody');
@@ -2429,11 +2469,11 @@ var blockExplorerPage =
                               txnOutputs.append('<tr data-value='+ txnOutput.output_source_address+'>\
                                                  <td>' +  txnOutput.output_source_address  + '</td>\
                                                  <td>' +  txnOutput.output_value + '</td>\
-                                            </tr>');
+                                            </tr>'); 
                             }
 
 
-
+                           
                             $(this).click();
                             $(this).off('click');
                             $(this).on('click', function() {
@@ -2441,13 +2481,13 @@ var blockExplorerPage =
                             })
                         }).find(".editable")
                 })
-            .on("dblclick", function(e)
+            .on("dblclick", function(e) 
             {
                 $(this).attr("href", "#block-info-modal");
 
                 $(this).leanModal({ top : 10, overlay : 0.5, closeButton: "#block-info-modal .modal_close" });
-
-                selectedBlock = bridge.blockDetails($(this).attr("data-value").trim()) ;
+                
+                selectedBlock = bridge.blockDetails($(this).attr("data-value").trim()) ; 
 
                 if(selectedBlock)
                 {
@@ -2476,316 +2516,4 @@ var blockExplorerPage =
                 })
             }).find(".editable")
     }
-}
-
-var keyManagementPage = {
-    init: function() {
-        setupWizard('new-key-wizard');
-        setupWizard('recover-key-wizard');
-        setupWizard('open-key-wizard');
-    },
-
-    newMnemonic: function () {
-        var result = bridge.getNewMnemonic( $("#new-account-passphrase").val(), $("#new-account-language").val() );
-        var error  = result.error_msg;
-        var mnemonic = result.mnemonic;
-
-        if(error != "")
-        {
-            alert(error);
-        }
-        else
-        {
-            $("#new-key-mnemonic").val(mnemonic);
-        }
-    },
-    compareMnemonics: function () {
-        var original = $("#new-key-mnemonic").val().trim();
-        var typed    = $("#validate-key-mnemonic").val().trim();
-
-        if (original == typed) {
-            $("#validate-key-mnemonic").removeClass("red");
-            $("#validate-key-mnemonic").val("");
-            return true;
-        }
-        else
-        {
-            $("#validate-key-mnemonic").addClass("red");
-            alert("The mnemonic you provided does not match the mnemonic that was generated eariler - please go back and check to make sure you've copied it down correctly.")
-            return false;
-        }
-    },
-    gotoPage: function(page) {
-        $("#navitems a[href='#" + page + "']").trigger('click');
-    },
-    prepareAccountTable: function()
-    {
-        $("#extkey-account-table  > tbody tr")
-            .on('click', function()
-            {
-                $(this).addClass("selected").siblings("tr").removeClass("selected");
-                var otherTableRows = $('#extkey-table > tbody > tr');
-                otherTableRows.removeClass("selected");
-            })
-    },
-    updateAccountList: function() {
-        keyManagementPage.accountList = bridge.extKeyAccList();
-
-        var tbody = $('#extkey-account-table  > tbody');
-        tbody.html('');
-        for (value in keyManagementPage.accountList) {
-
-            var acc = keyManagementPage.accountList[value];
-
-            tbody.append('<tr data-value='+acc.id+' active-flag=' + acc.active + '>\
-                         <td>' +  acc.id   + '</td>\
-                         <td>' +  acc.label + '</td>\
-                         <td>' +  acc.created_at + '</td>\
-                         <td><div ' + ((acc.active == 'true') ? 'class="green-circle"' : 'class="red-circle"') + ' ></td>\
-                         <td style="font-size: 2em; margin: auto;">' +  ((acc.default_account != undefined ? "&#x2611;" : "")) + '</td>\
-                         </tr>');
-        }
-        keyManagementPage.prepareAccountTable();
-    },
-    prepareKeyTable: function()
-    {
-        $("#extkey-table  > tbody tr")
-            .on('click', function()
-            {
-                $(this).addClass("selected").siblings("tr").removeClass("selected");
-                var otherTableRows = $('#extkey-account-table > tbody > tr');
-                otherTableRows.removeClass("selected");
-            })
-    },
-    updateKeyList: function() {
-        keyManagementPage.keyList = bridge.extKeyList();
-
-        var tbody = $('#extkey-table  > tbody');
-        tbody.html('');
-        for (value in keyManagementPage.keyList) {
-
-            var key = keyManagementPage.keyList[value];
-            tbody.append('<tr data-value='+key.id+' active-flag=' + key.active + '>\
-                         <td>' +  key.id   + '</td>\
-                         <td>' +  key.label + '</td>\
-                         <td>' +  key.path + '</td>\
-                         <td><div ' + ((key.active == 'true') ? 'class="green-circle"' : 'class="red-circle"') + ' ></td>\
-                         <td style="font-size: 2em; margin: auto;">' +  ((key.current_master != undefined ? "&#x2611;" : "")) + '</td>\
-                         </tr>');
-        }
-        keyManagementPage.prepareKeyTable();
-    },
-    newKey: function()
-    {
-        result = bridge.importFromMnemonic($('#new-key-mnemonic').val().trim(),
-                                           $('#new-account-passphrase').val().trim(),
-                                           $('#new-account-label').val().trim(),
-                                           $('#new-account-bip44').prop("checked"));
-
-        if(result.error_msg != '' )
-        {
-            alert(result.error_msg);
-            return false;
-        }
-    },
-    recoverKey: function()
-    {
-        result = bridge.importFromMnemonic($("#recover-key-mnemonic").val().trim(),
-                                           $("#recover-passphrase").val().trim(),
-                                           $("#recover-account-label").val().trim(),
-                                           $("#recover-bip44").prop("checked"),
-                                           1443657600);
-
-        if(result.error_msg != '' )
-        {
-            alert(result.error_msg);
-            return false;
-        }
-        else return true;
-    },
-    setMaster: function()
-    {
-        var keySelector = $("#extkey-table tr.selected");
-        if( !keySelector.length )
-        {
-            alert("Please select a key to set it as master.");
-            return false;
-        }
-
-        selected = $("#extkey-table tr.selected").attr("data-value").trim();
-        if(selected != undefined && selected != "")
-        {
-            result = bridge.extKeySetMaster(selected);
-            if(result.error_msg != '' )
-            {
-                alert(result.error_msg);
-                return false;
-            }
-            else
-            {
-                keyManagementPage.updateKeyList();
-            }
-        }
-        else
-        {
-            alert("Select a key from the table to set a Master.");
-            return false;
-        }
-    },
-    setDefault: function()
-    {
-        var accSelector = $("#extkey-account-table tr.selected");
-
-        if( !accSelector.length )
-        {
-            alert("Please select an account to set it as default.");
-            return false;
-        }
-
-        selected = $("#extkey-account-table tr.selected").attr("data-value").trim();
-        if(selected != undefined && selected != "")
-        {
-            result = bridge.extKeySetDefault(selected);
-            if(result.error_msg != '' )
-            {
-                alert(result.error_msg);
-                return false;
-            }
-            else
-            {
-                keyManagementPage.updateAccountList();
-            }
-        }
-        else
-        {
-            alert("Select an account from the table to set a default.");
-            return false;
-        }
-    },
-    changeActiveFlag: function()
-    {
-        var forAcc = false;
-
-        //Check whats selected - if anything.
-        var accSelector = $("#extkey-account-table tr.selected");
-        var keySelector = $("#extkey-table tr.selected");
-        if( !accSelector.length && !keySelector.length )
-        {
-            alert("Please select an account or key to change the active status.");
-            return false;
-        }
-
-        if( accSelector.length )
-        {
-            selected = accSelector.attr("data-value").trim();
-            active   = accSelector.attr("active-flag").trim();
-            forAcc   = true;
-        }
-        else
-        {
-            selected = keySelector.attr("data-value").trim();
-            active   = keySelector.attr("active-flag").trim();
-        }
-
-        if(selected != undefined && selected != "")
-        {
-            result = bridge.extKeySetActive(selected, active);
-            if(result.error_msg != '' )
-            {
-                alert(result.error_msg);
-                return false;
-            }
-            else
-            {
-                if(forAcc)
-                {
-                    keyManagementPage.updateAccountList();
-                }
-                else
-                {
-                    keyManagementPage.updateKeyList();
-                }
-            }
-        }
-        else
-        {
-            alert("Please select an account or key to change the active status.");
-            return false;
-        }
-    }
-}
-
-function setupWizard(section) {
-
-    var steps = $("#" + section + " > div");
-
-    // I just did this to make using 's and "s easier in the below prepend and append.
-    backbtnjs = '$("#key-options").show(); $("#wizards").hide();';
-    fwdbtnjs  = 'gotoWizard("new-key-wizard", 1);';
-    $("#" + section).prepend("<div id='backWiz' class='wizardback' onclick='" + backbtnjs + "' ></div>")
-    $("#" + section).prepend("<div id='fwdWiz'  class='wizardfwd'  onclick='" + fwdbtnjs  + "' ></div>")
-
-    steps.each(function (i) {
-            $(this).addClass("step" + i)
-            $(this).hide();
-        }
-    );
-}
-
-function gotoWizard(section, step, runStepJS) {
-    // Hide all wizards
-    var sections = $("#wizards > div");
-
-    // Run validation on the wizard step - any error messages can be set there as well
-    // TODO:  enhance these wizard functions to cater for validation fields etc.
-    validateJS = $("#" + section + " .step" + (step - 1) ).attr("validateJS");
-
-    // We check runStepJS because we must only validate when moving forward in the wizard
-    if(runStepJS && validateJS != undefined)
-    {
-        var valid = eval(validateJS);
-        if(!valid) {return false;}
-    }
-
-    sections.each(function (i) {
-        $(this).hide();
-        sections.width( $("#keymanagement > .bottom").width() - 100 );
-    })
-
-    var steps = $("#" + section + " > div[class^=step]");
-    var gotoStep = step;
-    if (gotoStep == null) { gotoStep = 0; }
-
-    if(gotoStep == 0) {
-        $("#" + section + " #backWiz").attr( 'onclick', '$("#key-options").show(); $("#wizards").hide();' )
-        $("#" + section + " #fwdWiz").attr( 'onclick', 'gotoWizard("' + section + '", 1, true);' )
-    }
-    else
-    {
-        $("#" + section + " #backWiz").attr( 'onclick', 'gotoWizard("' + section + '", ' + (gotoStep - 1) + ' , false);' )
-        $("#" + section + " #fwdWiz").attr( 'onclick',  'gotoWizard("' + section + '", ' + (gotoStep + 1) + ' , true);' )
-    }
-
-    // If we're at the end of the wizard then change the forward button to do whatever
-    endWiz = $("#" + section + " .step" + (step) ).attr("endWiz");
-    if(endWiz != undefined && endWiz != "")
-    {
-      $("#" + section + " #fwdWiz").attr( 'onclick',  endWiz );
-    }
-
-    // Hide all wizard steps - if we want cross wizards/steps etc.
-    steps.each(function (i) {
-        $(this).hide();
-    });
-
-    //Show the correct section and the step.
-    $("#" + section).show();
-    stepJS = $("#" + section + " .step" + gotoStep ).attr("stepJS");
-
-    // Run the JS we want for this step we're about to start -
-    if(runStepJS && stepJS != undefined)
-    {
-        eval(stepJS);
-    }
-    $("#" + section + " .step" + gotoStep ).fadeIn(500);
 }

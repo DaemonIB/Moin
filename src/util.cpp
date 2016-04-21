@@ -255,8 +255,8 @@ int LogPrintStr(const std::string &str)
     {
         // print to console
         ret = fwrite(str.data(), 1, str.size(), stdout);
-    }
-    else if (fPrintToDebugLog)
+    } else
+    if (fPrintToDebugLog)
     {
         static bool fStartedNewLine = false;
         boost::call_once(&DebugPrintInit, debugPrintInitFlag);
@@ -367,6 +367,20 @@ void ParseString(const string& str, char c, vector<string>& v)
     }
 }
 
+// safeChars chosen to allow simple messages/URLs/email addresses, but avoid anything
+// even possibly remotely dangerous like & or >
+static string safeChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890 .,;_/:?@");
+string SanitizeString(const string& str)
+{
+    string strResult;
+    for (std::string::size_type i = 0; i < str.size(); i++)
+    {
+        if (safeChars.find(str[i]) != std::string::npos)
+            strResult.push_back(str[i]);
+    }
+    return strResult;
+}
+
 
 string FormatMoney(int64_t n, bool fPlus)
 {
@@ -437,19 +451,6 @@ bool ParseMoney(const char* pszIn, int64_t& nRet)
     return true;
 }
 
-// safeChars chosen to allow simple messages/URLs/email addresses, but avoid anything
-// even possibly remotely dangerous like & or >
-static string safeChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890 .,;_/:?@");
-string SanitizeString(const string& str)
-{
-    string strResult;
-    for (std::string::size_type i = 0; i < str.size(); i++)
-    {
-        if (safeChars.find(str[i]) != std::string::npos)
-            strResult.push_back(str[i]);
-    }
-    return strResult;
-}
 
 static const signed char phexdigit[256] =
 { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -524,6 +525,7 @@ void ParseParameters(int argc, const char* const argv[])
 {
     mapArgs.clear();
     mapMultiArgs.clear();
+
     for (int i = 1; i < argc; i++)
     {
         std::string str(argv[i]);
@@ -539,6 +541,7 @@ void ParseParameters(int argc, const char* const argv[])
         if (boost::algorithm::starts_with(str, "/"))
             str = "-" + str.substr(1);
 #endif
+
         if (str[0] != '-')
             break;
 
@@ -559,7 +562,7 @@ void ParseParameters(int argc, const char* const argv[])
     }
 }
 
-namespace sdc
+namespace moin
 {
 void *memrchr(const void *s, int c, size_t n)
 {
@@ -1009,7 +1012,7 @@ static std::string FormatException(std::exception* pex, const char* pszThread)
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "shadowcoin";
+    const char* pszModule = "moin";
 #endif
     if (pex)
         return strprintf(
@@ -1022,7 +1025,7 @@ static std::string FormatException(std::exception* pex, const char* pszThread)
 void PrintException(std::exception* pex, const char* pszThread)
 {
     std::string message = FormatException(pex, pszThread);
-    LogPrintf("\n\n************************\n%s\n", message);
+    LogPrintf("\n\n************************\n%s\n", message.c_str());
     fprintf(stderr, "\n\n************************\n%s\n", message.c_str());
     strMiscWarning = message;
     throw;
@@ -1031,7 +1034,7 @@ void PrintException(std::exception* pex, const char* pszThread)
 void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 {
     std::string message = FormatException(pex, pszThread);
-    LogPrintf("\n\n************************\n%s\n", message);
+    LogPrintf("\n\n************************\n%s\n", message.c_str());
     fprintf(stderr, "\n\n************************\n%s\n", message.c_str());
     strMiscWarning = message;
 }
@@ -1039,15 +1042,15 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\ShadowCoin
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\ShadowCoin
-    // Mac: ~/Library/Application Support/ShadowCoin
-    // Unix: ~/.shadowcoin
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\Moin
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\Moin
+    // Mac: ~/Library/Application Support/Moin
+    // Unix: ~/.moin
     
     
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "ShadowCoin";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "Moin";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -1059,10 +1062,10 @@ boost::filesystem::path GetDefaultDataDir()
         // Mac
         pathRet /= "Library/Application Support";
         fs::create_directory(pathRet);
-        return pathRet / "ShadowCoin";
+        return pathRet / "Moin";
     #else
         // Unix
-        return pathRet / ".shadowcoin";
+        return pathRet / ".moin";
     #endif
 #endif
 
@@ -1117,7 +1120,7 @@ void ClearDatadirCache()
 
 boost::filesystem::path GetConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-conf", "shadowcoin.conf"));
+    boost::filesystem::path pathConfigFile(GetArg("-conf", "moin.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
     return pathConfigFile;
 }
@@ -1150,7 +1153,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 
 boost::filesystem::path GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "shadowcoind.pid"));
+    boost::filesystem::path pathPidFile(GetArg("-pid", "moind.pid"));
     if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }
@@ -1212,7 +1215,7 @@ const char *GetNodeStateName(int stateInd)
     return "unknown";
 };
 
-void ReplaceStrInPlace(std::string &subject, const std::string search, const std::string replace)
+void ReplaceStrInPlace(std::string &subject, const std::string &search, const std::string &replace)
 {
     size_t pos = 0;
     while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -1264,8 +1267,8 @@ void ShrinkDebugFile()
         {
             fwrite(pch, 1, nBytes, file);
             fclose(file);
-        }
-    }
+        };
+    };
 }
 
 //
@@ -1279,7 +1282,8 @@ static int64_t nMockTime = 0;  // For unit testing
 
 int64_t GetTime()
 {
-    if (nMockTime) return nMockTime;
+    if (nMockTime)
+        return nMockTime;
 
     return time(NULL);
 }
@@ -1338,10 +1342,10 @@ void AddTimeData(const CNetAddr& ip, int64_t nTime)
                 if (!fMatch)
                 {
                     fDone = true;
-                    string strMessage = _("Warning: Please check that your computer's date and time are correct! If your clock is wrong ShadowCoin will not work properly.");
+                    string strMessage = _("Warning: Please check that your computer's date and time are correct! If your clock is wrong Moin will not work properly.");
                     strMiscWarning = strMessage;
                     LogPrintf("*** %s\n", strMessage.c_str());
-                    uiInterface.ThreadSafeMessageBox(strMessage+" ", string("ShadowCoin"), CClientUIInterface::BTN_OK | CClientUIInterface::ICON_WARNING);
+                    uiInterface.ThreadSafeMessageBox(strMessage+" ", string("Moin"), CClientUIInterface::BTN_OK | CClientUIInterface::ICON_WARNING);
                 }
             }
         }
@@ -1362,7 +1366,8 @@ void seed_insecure_rand(bool fDeterministic)
     if (fDeterministic)
     {
         insecure_rand_Rz = insecure_rand_Rw = 11;
-    } else {
+    } else
+    {
         uint32_t tmp;
         do {
             RAND_bytes((unsigned char*)&tmp,4);

@@ -49,9 +49,9 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry)
     entry.push_back(Pair("version", tx.nVersion));
     entry.push_back(Pair("time", (int64_t)tx.nTime));
     entry.push_back(Pair("locktime", (int64_t)tx.nLockTime));
-
+    
     std::vector<uint8_t> vchImage;
-
+    
     Array vin;
     BOOST_FOREACH(const CTxIn& txin, tx.vin)
     {
@@ -65,24 +65,17 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry)
                 && txin.IsAnonInput())
             {
                 txin.ExtractKeyImage(vchImage);
-
+                
                 int nRingSize = txin.ExtractRingSize();
-
+                
                 in.push_back(Pair("keyimage", HexStr(vchImage)));
                 in.push_back(Pair("ringsize", nRingSize));
-
-                CTxDB txdb("r");
-                CKeyImageSpent ski;
-                bool fInMemPool;
-
-                if (GetKeyImage(&txdb, vchImage, ski, fInMemPool))
-                    in.push_back(Pair("value", ValueFromAmount(ski.nValue)));
             } else
             {
                 in.push_back(Pair("txid", txin.prevout.hash.GetHex()));
                 in.push_back(Pair("vout", (int64_t)txin.prevout.n));
             };
-
+            
             Object o;
             o.push_back(Pair("asm", txin.scriptSig.ToString()));
             o.push_back(Pair("hex", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
@@ -91,7 +84,7 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry)
         in.push_back(Pair("sequence", (int64_t)txin.nSequence));
         vin.push_back(in);
     };
-
+    
     entry.push_back(Pair("vin", vin));
     Array vout;
     for (unsigned int i = 0; i < tx.vout.size(); i++)
@@ -189,7 +182,7 @@ Value listunspent(const Array& params, bool fHelp)
         {
             CBitcoinAddress address(input.get_str());
             if (!address.IsValid())
-                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid ShadowCoin address: ")+input.get_str());
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid MOIN address: ")+input.get_str());
             if (setAddress.count(address))
                 throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid parameter, duplicated address: ")+input.get_str());
            setAddress.insert(address);
@@ -281,7 +274,7 @@ Value createrawtransaction(const Array& params, bool fHelp)
     {
         CBitcoinAddress address(s.name_);
         if (!address.IsValid())
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid ShadowCoin address: ")+s.name_);
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid MOIN address: ")+s.name_);
 
         if (setAddress.count(address))
             throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid parameter, duplicated address: ")+s.name_);
@@ -434,7 +427,7 @@ Value signrawtransaction(const Array& params, bool fHelp)
     {
         EnsureWalletIsUnlocked();
     };
-
+    
     // Add previous txouts given in the RPC call:
     if (params.size() > 1 && params[1].type() != null_type)
     {
@@ -479,7 +472,7 @@ Value signrawtransaction(const Array& params, bool fHelp)
             {
                 mapPrevOut[outpoint] = scriptPubKey;
             };
-
+            
             // if redeemScript given and not using the local wallet (private keys
             // given), add redeemScript to the tempKeystore so it can be signed:
             if (fGivenKeys && scriptPubKey.IsPayToScriptHash())
@@ -544,7 +537,7 @@ Value signrawtransaction(const Array& params, bool fHelp)
         if (!VerifyScript(txin.scriptSig, prevPubKey, mergedTx, i, STANDARD_SCRIPT_VERIFY_FLAGS, 0))
         {
             fComplete = false;
-        };
+        }
     };
 
     Object result;

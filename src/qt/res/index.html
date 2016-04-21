@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shadow</title>
+    <title>MOIN</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link href="qrc:///css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
     <link href="qrc:///css/normalize.css" rel="stylesheet" type="text/css">
@@ -23,7 +22,7 @@
     <script src="qrc:///js/jquery.transit.min.js" type="text/javascript"></script>
     <script src="qrc:///js/qrcode.min.js" type="text/javascript"></script>
     <script src="qrc:///js/jquery.leanModal.min.js" type="text/javascript"></script>
-    <script src="qrc:///js/markdown.min.js" type="text/javascript"></script>
+    <script src="qrc:///js/markdown.min.js" type="text/javascript"></script>		
 </head>
 <body>
 
@@ -35,59 +34,31 @@
     </a>
 
     <nav id="navpanel">
-        <div class="menu">
-            <span><a id="file"     href="#">File</a></span>
-            <span><a id="settings" href="#">Settings</a></span>
-            <span><a id="help"     href="#">Help</a></span>
-        </div>
         <div style="text-align:center;">
-            <a href="http://shadow.cash" target="_blank"><img src="qrc:///images/sdc-vertical"></a>
+            <a class="img-logo" = href="https://discovermoin.com" target="_blank"><img style="margin-top:45px;margin-bottom:24px;width:131px;height:105px;"src="qrc:///images/moin-vertical"></a>
         </div>
 
         <ul id="navitems" class="vmenu">
-            <li class="selected"><a href="#overview">overview</a></li>
-            <li><a href="#send">send</a></li>
-            <li><a href="#receive">receive</a></li>
-            <li><a href="#transactions">transactions</a></li>
-            <li><a href="#addressbook">address book</a></li>
-            <li><a href="#messages" onclick="iscrollReload(true);">ShadowChat</a></li>
+            <li class="selected"><a href="#overview">Overview</a></li>
+            <li><a href="#send">Send</a></li>
+            <li><a href="#receive">Receive</a></li>
+            <li><a href="#transactions">Transactions</a></li>
+            <li><a href="#addressbook">Address book</a></li>
+            <li><a href="#messages" onclick="iscrollReload(true);">Chat</a></li>
             <li><a href="#chaindata" onclick="chainDataPage.updateAnonOutputs();">Chain Data</a></li>
             <li><a href="#blockdata" onclick="blockExplorerPage.updateLatestBlocks();">Block Explorer</a></li>
-            <li class="none"><a href="#keymanagement" onclick="$('#key-options').show(); $('#wizards').hide(); $('#keymanagement-advanced').hide();">Key Management</a></li>
             <li class="none"><a href="#options">Options</a></li>
-            <!--li><a href="#news">news</a></li   showWizardScreen('key-manage-wizard'); -->
+			<li><a href="#news">News</a></li>
         </ul>
-
+		
         <div id="navinfo">
-            <a id="clientinfo" href="#about">Shadow <span id="version"></span></a>
-            <progress id="syncProgressBar" max=100 value=1 data-title="Catching up...
+            <a id="clientinfo" href="#about">Moin <span id="version"></span></a>
+            <progress id="syncProgressBar" max=100 value=1 title="Catching up...
                                                                   downloaded 0 blocks of history..."></progress>
         </div>
     </nav><!-- /navpanel -->
 
     <div class="container">
-        <div id="header" class="flex">
-            <div id="txnsearch" class="flex-item">
-                <input type="search" placeholder="Search transaction" oninput="$('#filter-transaction').val(this.value).trigger('keyup');if($('li.selected a[href=#transactions]').length==0)$('#navpanel li a[href=#transactions]').click();" />
-            </div>
-            <div class="user-profile">
-                <span class="user-avatar">
-                    <img src="qrc:///images/default">
-                    <span style="display:none" class="user-notifications">
-                        <span id="message-count">0</span>
-                    </span>
-                </span>
-                <span class="user-info">
-                    <span class="user-name"></span>
-                    <span class="user-menu">
-                        <!--- <i class="fa fa-check font-26px fa-angle-down"></i> -->
-                    </span>
-                    <br>
-                    <span class="user-address"></span>
-                </span>
-            </div>
-        </div><!-- /header -->
-
         <div id="add-address-modal" style="display:none;" class="content">
             <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
 
@@ -159,7 +130,7 @@
         </div>
 
         <div id="qrcode-modal" class="content">
-            <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
+            <a class="modal_close" href="#close"><i class="fa fa-times-circle grey"></i></a>
             <div id="qrcode"></div>
 
             <textarea id="qrcode-data" style="width:99%;" disabled rows="3"></textarea>
@@ -167,7 +138,7 @@
 
             <span style="white-space:nowrap;">
                 <label for="qraddress" class="recipient">Address:</label>
-                <input id="qraddress" class="pay_to input_box" style="width:250px" placeholder="Enter a Shadow address (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" onchange="showQRCode();" />
+                <input id="qraddress" class="pay_to input_box" style="width:250px" placeholder="Enter a MOIN address (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" onchange="showQRCode();" />
             </span>
 
             <span style="white-space:nowrap;">
@@ -184,39 +155,46 @@
                 <label for="qramount" class="recipient">Amount:</label>
                 <input id="qramount" style="width:140px;" type="number" placeholder="0.00000000" step="0.01" value="0.00000000" onchange="unit.parse(this, $('#qrunit').val());showQRCode();" />
                 <select id="qrunit" class="unit button is-inverse has-fixed-icon" style="margin-left:10px; height:43px; width:100px;" onchange="unit.format('#qramount', $(this).val());showQRCode();">
-                    <option value="0" title="Shadow">SDC</option>
-                    <option value="1" title="Milli-Shadow (1 / 1000)">mSDC</option>
-                    <option value="2" title="Micro-Shadow (1 / 1000000)">&micro;SDC</option>
-                    <option value="3" title="Shadowshi (1 / 100000000)">Shadowshi</option>
+                    <option value="0" title="Moin">MOIN</option>
+                    <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
+                    <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
+                    <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
                 </select>
             </span>
 
         </div>
-
+			        <div class="menu">
+            <span><a id="settings" href="#">Settings</a></span>
+        </div>
         <!-- Overview Page -->
         <article id="overview">
+		
+			
+		
             <div class="content top">
+			
+
                 <h2 class="contracted">Balance <span class="outofsync syncing">out of sync</span></h2>
 
                 <!--span class="incoming-transactions none">
                     <i class="fa fa-sign-in margin-right-10"></i>
                     498.<span class="cents">34000000</span>
-                    <span class="units">SHADOW</span>
+                    <span class="units">MOINX</span>
                 </span-->
 
                 <div class="total-balance">
                     <div>
                         <span id="total-big">
                             <span>0</span>
-                            <span class="light-red">.</span>
+                            <span class="light-grey">.</span>
                             <span class="cents">00</span>
-                            <span class="units">SDC</span>
+                            <span class="units">MOIN</span>
                         </span>
                         <span id="staking-big" class="staking">
                             <span>0</span>
-                            <span class="light-red">.</span>
+                            <span class="light-grey">.</span>
                             <span class="cents">00</span>
-                            <span class="units">SDC</span>
+                            <span class="units">MOIN</span>
                             <i class="fa fa-cog"></i>
                         </span>
                     </div>
@@ -226,14 +204,13 @@
 
                     <div>
                         <table id="balances">
-                            <tr><td>Spendable:      </td><td class="balance"       >0.00</td><td class="unit">SDC</td></tr>
-                            <tr><td>Shadow:         </td><td class="shadow_balance">0.00</td><td class="unit">SDC</td></tr>
-                            <tr><td>Reserved:       </td><td id="reserved"         >0.00</td><td class="unit">SDC</td></tr>
-                            <tr><td>Stake:          </td><td id="stake"            >0.00</td><td class="unit">SDC</td></tr>
-                            <tr><td>Unconfirmed:    </td><td id="unconfirmed"      >0.00</td><td class="unit">SDC</td></tr>
-                            <tr><td>Immature:       </td><td id="immature"         >0.00</td><td class="unit">SDC</td></tr>
-
-                            <tr><td><b>Total:   </b></td><td id="total"            >0.00</td><td class="unit">SDC</td></tr>
+                            <tr><td>Spendable:      </td><td class="balance" >0.00</td><td class="unit">MOIN</td></tr>
+                            <tr><td>MOINX:         </td><td id="moinXBal"  >0.00</td><td class="unit">MOIN</td></tr>
+                            <tr><td>Reserved:       </td><td id="reserved"   >0.00</td><td class="unit">MOIN</td></tr>
+                            <tr><td>Stake:          </td><td id="stake"      >0.00</td><td class="unit">MOIN</td></tr>
+                            <tr><td>Unconfirmed:    </td><td id="unconfirmed">0.00</td><td class="unit">MOIN</td></tr>
+                            <tr><td>Immature:       </td><td id="immature"   >0.00</td><td class="unit">MOIN</td></tr>
+                            <tr><td><b>Total:   </b></td><td id="total"      >0.00</td><td class="unit">MOIN</td></tr>
                         </table>
                     </div>
                 </div>
@@ -243,18 +220,10 @@
                     <div class="content flex">
                         <div class="flex-item grow one-third-width">
                             <h2>Recent Transactions</h2>
-
-                            <div id="recenttxns">
-
+                            <div id="recenttxns">				
                             </div>
                         </div>
-                        <div class="flex-item grow one-third-width">
-                            <h2>Announcements</h2>
-
-                            <div id="announcements">
-
-                            </div>
-                        </div>
+      
                     </div>
                 </div>
             </div>
@@ -263,6 +232,8 @@
 
         <!-- Send Page -->
         <article id="send" style="display:none;">
+	
+			
             <div id="sendoptions" class="content top">
 
                 <h2>Send Options</h2>
@@ -270,7 +241,7 @@
                 <div id="coincontrol">
 
                     <div id="coincontrol_enabled" style="display:block;">
-                        <a class="button is-inverse has-icon-spacing" class="button" id="coincontrol_inputs" onclick="bridge.openCoinControl();">Inputs</a> <label id="coincontrol_auto" for="coincontrol_inputs" class="coincontrol_inputs"> Automatically selected</label>
+                        <a class="button is-inverse2 has-icon-spacing" class="button" id="coincontrol_inputs" onclick="bridge.openCoinControl();">Inputs</a> <label id="coincontrol_auto" for="coincontrol_inputs" class="coincontrol_inputs"> Automatically selected</label>
                         <br/>
                         <div id="coincontrol_labels" style="display:none;">
                             <span style="white-space:nowrap;">
@@ -316,32 +287,32 @@
 
                         <label>Custom change address: </label>
                         <div class="flex-left">
-                            <input id="change_address" data-title="Optional address to receive transaction change" placeholder="Enter a Shadow address (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" maxlength="128" oninput="base58.check(this);" />
-                            <a id="cust-add-lkp" class="button is-inverse has-fixed-icon"  style="margin-right:10px; margin-left:10px; height:43px; width:43px;" href="#address-lookup-modal" onclick="returnto='change_address'; prepAddressLookup(true);" ><i class="fa fa-book"></i></a>
-                            <a class="button is-inverse has-fixed-icon"  style="margin-right:10px; height:43px; width:43px;" onclick="paste('#change_address')"><i class="fa fa-files-o"></i></a>
-                            <a class="button is-inverse has-fixed-icon"  style="height:43px; width:43px;" onclick="$('#change_address').val('').css('background', '').css('color', '');"><i class="fa fa-times"></i></a>
+                            <input id="change_address" data-title="Optional address to receive transaction change" placeholder="Enter a MOIN address (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" maxlength="128" oninput="base58.check(this);" />
+ +                            <a id="cust-add-lkp" class="button is-inverse has-fixed-icon"  style="margin-right:10px; margin-left:10px; height:43px; width:43px;" href="#address-lookup-modal" onclick="returnto='change_address'; prepAddressLookup(true);" ><i class="fa fa-book"></i></a>
+                            <a class="button is-inverse2 has-fixed-icon"  style="margin-right:10px; height:43px; width:43px;" onclick="paste('#change_address')"><i class="fa fa-files-o"></i></a>
+                            <a class="button is-inverse2 has-fixed-icon"  style="height:43px; width:43px;" onclick="$('#change_address').val('').css('background', '').css('color', '');"><i class="fa fa-times"></i></a>
                         </div>
                         <br/>
                         <br/>
 
-                         <a class="button is-inverse has-icon-spacing" id="disable_coincontrol" href="javascript:toggleCoinControl(false);">Disable Coin Control <i class="fa fa-times"></i></a>
+                         <a class="button is-inverse2 has-icon-spacing" style="margin-bottom:25px;padding: 9px 20px;margin-right:25px;" id="disable_coincontrol" href="javascript:toggleCoinControl(false);">Disable Coin Control <i class="fa fa-times"></i></a>
                     </div>
 
                     <div id="coincontrol_disabled" style="display:none;">
-                        <a class="button is-inverse has-icon-spacing"  id="enable_coincontrol" href="javascript:toggleCoinControl(true);">Enable Coin Control <i class="fa fa-check"></i></a>
+                        <a class="button is-inverse2 has-icon-spacing"  style="margin-bottom:25px;padding: 9px 20px;margin-right:25px;" id="enable_coincontrol" href="javascript:toggleCoinControl(true);">Enable Coin Control <i class="fa fa-check"></i></a>
                     </div>
                 </div><!-- #coincontrol -->
 
-                <select id="txn_type" class="txn_type button is-inverse has-fixed-icon"  style="width:180px;" onchange="changeTxnType();">
-                    <option value="0" title="SDC to SDC" selected>SDC to SDC</option>
-                    <option value="1" title="SDC to Shadow">SDC to Shadow</option>
-                    <option value="2" title="Shadow to Shadow">Shadow to Shadow</option>
-                    <option value="3" title="Shadow to SDC">Shadow to SDC</option>
+                <select id="txn_type" class="txn_type button is-inverse2 has-fixed-icon"  style="width:160px;" onchange="changeTxnType();">
+                    <option value="0" title="MOIN to MOIN" selected>MOIN to MOIN</option>
+                    <option value="1" title="MOIN to MoinX">MOIN to MOINX</option>
+                    <option value="2" title="MoinX to MoinX">MOINX to MOINX</option>
+                    <option value="3" title="MoinX to MOIN">MOINX to MOIN</option>
                 </select>
 
                 <span id="tx_ringsize">
                     <label for="ring_size" class="ring_size" style="margin-left:10px;margin-top:0;">Ring Size:</label>
-                    <input id="ring_size" class="ring_size input_box" type="number" min="3" max="200" step="1" value="16" />
+                    <input id="ring_size" style="font-size: 12px;" class="ring_size input_box" type="number" min="3" max="200" step="1" value="16" />
                 </span>
             </div><!-- #sendoptions.top -->
 
@@ -351,10 +322,8 @@
                     <div class="ui-buttons">
                         <a class="button is-inverse has-icon-spacing" onclick="addRecipient();" data-title="Send to multiple recipients at once"><i class="fa fa-plus"></i>Add Recipient</a>
                         <a  class="button is-inverse has-icon-spacing" onclick="clearRecipients();" data-title="Remove all transaction fields"><i class="fa fa-close"></i>Clear All</a>
-                        <span data-title="Current spendable balance"><a class="current_spenable_balance"><b>Balance:</b>
-                          <span id="spend_sdc"   ><span class="balance"       >0.00</span> <span class="unit">SDC</span></span>
-                          <span id="spend_shadow"><span class="shadow_balance">0.00</span> <span class="unit">SDC</span></span>
-                        </span>
+                        <span data-title="Current spendable balance"><a class="current_spenable_balance"><b>Balance:</b> <span class="balance">0.00</span> <span class="unit">MOIN</span></span>
+                        <span></span>
                         <a class="button is-inverse has-icon-spacing"  id="suggest_ring_size" href="javascript:suggestRingSize();">Suggest Ring Size <i class="fa fa-calculator"></i></a>
                         <a class="button is-inverse has-icon-spacing" onclick="sendCoins();" data-title="Confirm the send action"><i class="fa fa-arrow-right"></i>Send</a>
                     </div>
@@ -362,6 +331,7 @@
             </div>
         </article><!-- /send page -->
 
+    
         <div id="verify-sign-modal" style="display:none;" class="content">
             <div id="signing-options">
                 <a id='sign-href' onclick="$('#sign-message-modal').show(); $('#verify-message-modal').hide(); $('#sign-href').addClass('heading-selected'); $('#sign-href').removeClass('heading-deselected'); $('#verify-href').addClass('heading-deselected'); $('#verify-href').removeClass('heading-selected');">Sign Message</a> / <a id="verify-href" onclick="$('#sign-message-modal').hide(); $('#verify-message-modal').show(); $('#sign-href').addClass('heading-deselected'); $('#sign-href').removeClass('heading-selected'); $('#verify-href').addClass('heading-selected'); $('#verify-href').removeClass('heading-deselected');">Verify Message</a>
@@ -371,7 +341,7 @@
             <div id="sign-message-modal" style="display:none;">
                 <div style="white-space:nowrap;">
                     <div style="white-space: pre-wrap; line-height: 1em;">You can sign messages with your addresses to prove you own them. Be careful not to sign anything vague, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</div><br/>
-                    <input id="sign-address"  class="input_box" data-title="Enter a ShadowCash address to sign the message with (e.g. SaKYqfD8J3vw4RTnqtgk2K9B67CBaL3mhV)" placeholder="Enter a ShadowCash address to sign the message with (e.g. SaKYqfD8J3vw4RTnqtgk2K9B67CBaL3mhV)" maxlength="128"  />
+                    <input id="sign-address"  class="input_box" data-title="Enter a MOIN address to sign the message with (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a MOIN address to sign the message with (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" maxlength="128"  />
                     <a id="sign-addlkp-btn" class="button is-inverse has-fixed-icon small-button" data-title="Choose address from address book" href="#address-lookup-modal" onclick="returnto='sign-address';prepAddressLookup(true);"><i class="fa fa-book"></i></a><br/>
                     <textarea id="sign-message"   class="input_box" placeholder="Enter the message you want to sign"       data-title="Enter the message you want to sign"></textarea><br/>
                     <input    id="sign-signature" class="input_box" placeholder="Click sign message to generate signature" data-title="Click sign message to generate signature" readonly/>
@@ -387,10 +357,10 @@
             <div id="verify-message-modal" style="display:none;">
                 <div style="white-space:nowrap;">
                     <div style="white-space: pre-wrap; line-height: 1em;">Enter the signing address, message (ensure you copy line breaks, spaces, tabs etc. exactly) and signature below to verify the message. Be careful not to read more into the signature than what is in the signed message itself, to avoid being tricked by a man-in-the-middle attack.</div><br/>
-                    <input id="verify-address"  class="input_box" style="width:600px ;" data-title="Enter a ShadowCash address to verify the message with (e.g. SaKYqfD8J3vw4RTnqtgk2K9B67CBaL3mhV)" placeholder="Enter a ShadowCash address to verify the message with (e.g. SaKYqfD8J3vw4RTnqtgk2K9B67CBaL3mhV)" maxlength="128"  />
+                    <input id="verify-address"  class="input_box" style="width:600px ;" data-title="Enter a MOIN address to verify the message with (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a MOIN address to verify the message with (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" maxlength="128"  />
                     <a id="verify-addlkp-btn" class="button is-inverse has-fixed-icon small-button" style="margin-right: 0px" data-title="Choose address from address book" href="#address-lookup-modal" onclick="returnto='verify-address';prepAddressLookup(false);"><i class="fa fa-book"></i></a><a class="button is-inverse has-fixed-icon small-button" href="javascript:paste('#verify-address');" data-title="Paste address from clipboard"><i class="fa fa-copy"></i></a><br/>
                     <textarea id="verify-message" class="input_box" placeholder="Enter the message you want to verify" data-title="Enter the message you want to verify"></textarea><br/>
-                    <input id="verify-signature" class="input_box" placeholder="Enter a ShadowCash signature" data-title="Enter a ShadowCash signature" onchange="" />
+                    <input id="verify-signature" class="input_box" placeholder="Enter a MOIN signature" data-title="Enter a MOIN signature" onchange="" />
                     <a class="button is-inverse has-fixed-icon small-button" href="javascript:paste('#verify-signature');" data-title="Paste signature from clipboard"><i class="fa fa-copy"></i></a>
                 </div>
                 <br/>
@@ -402,11 +372,12 @@
             </div>
         </div>
 
+
         <!-- Receive Page -->
         <article id="receive" style="display:none;">
             <div class="content top">
                 <h2>Receive</h2>
-                These are your Shadow addresses for receiving payments. You may want to have a different address for each sender so you can keep track of who is paying you.
+                These are your Moin addresses for receiving payments. You may want to have a different address for each sender so you can keep track of who is paying you.
             </div>
 
             <div class="bottom">
@@ -431,11 +402,12 @@
                             </tr>
                         </thead>
                         <tbody>
+                            </tr-->
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="4">
-                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -450,9 +422,9 @@
                 </div><!-- /content -->
             </div><!-- /bottom -->
         </article><!-- /receive page -->
-
+ 
         <div id="transaction-info-modal" style="display:none;">
-            <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
+            <a class="modal_close" href="#close"><i class="fa fa-times-circle grey"></i></a>
             <div id="transaction-info"></div>
         </div>
 
@@ -460,6 +432,7 @@
         <article id="transactions" style="display:none;">
             <div class="content top">
                 <h2>Transactions</h2>
+				<p>Here are the details of your incoming and outgoing transactions.</p>
             </div>
 
             <div class="bottom">
@@ -500,8 +473,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="6" style="background:#E5203D!important;">
-                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                <td colspan="6" style="background:#131218!important;">
+                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -515,6 +488,7 @@
         <article id="addressbook" style="display:none;">
             <div class="content top">
                 <h2>Address Book</h2>
+				<p>Here you can store the addresses of friends and other people you transact with often.</p>
             </div>
             <div class="bottom">
 
@@ -533,15 +507,14 @@
                                 <th data-toggle="true" data-sort-initial="true">Label</th>
                                 <th data-hide="phone">Address</th>
                                 <th data-hide="phone,tablet">Public Key</th>
-                                <th data-hide="phone,tablet">Address Type</th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4" style="background:#E5203D!important;">
-                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                <td colspan="4" style="background:#131218!important;">
+                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -554,20 +527,21 @@
                        <a id="verify-message-button" class="button is-inverse has-icon-spacing" href="#verify-sign-modal" onclick="$('#verify-href').click(); $('#verify-address').val($('#addressbook .footable .selected .address').text()); "><i class="fa fa-check"></i>Verify Message</a>
                        <a class="button is-inverse has-icon-spacing" href="#filter-addressbook" onclick="var addr=$('#addressbook .footable .selected .address');if(bridge.deleteAddress(addr.text()))addr.closest('tr').remove();resizeFooter();"><i class="fa fa-close"></i>Delete</a>
                     </div>
+                    </div>
                 </div><!-- /content -->
             </div><!-- /bottom -->
         </article><!-- /addressbook page -->
 
         <div id="message-preview-modal" style="display:none;">
-            <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
+            <a class="modal_close" href="#close"><i class="fa fa-times-circle grey"></i></a>
             <div id="message-preview"></div>
         </div>
 
         <div id="new-contact-modal" style="display:none;" class="content">
-            <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
+            <a class="modal_close" href="#close"><i class="fa fa-times-circle grey"></i></a>
             <div style="white-space:nowrap;">
                 <label for="new-contact-address" class="recipient">Address: </label>
-                <input id="new-contact-address"  class="recipient input_box" style="width: 300px;" data-title="The address to send the payment to  (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a Shadow address (e.g. SXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" onchange="if(base58.check(this)) $('#new-contact-pubkey').val(bridge.getPubKey(this.value, $('#new-contact-name').val()));" maxlength="128" oninput="base58.check(this);"/>
+                <input id="new-contact-address"  class="recipient input_box" style="width: 300px;" data-title="The address to send the payment to  (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a MOIN address (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" onchange="if(base58.check(this)) $('#new-contact-pubkey').val(bridge.getPubKey(this.value, $('#new-contact-name').val()));" maxlength="128" oninput="base58.check(this);"/>
                 <a class="button is-inverse has-fixed-icon" data-title="Choose address from address book" style="margin-right:10px; margin-left:10px; height:43px; width:43px;" onclick="openAddressBook('#new-contact-address', '#new-contact-name', true)"><i class="fa fa-book"></i></a>
                 <a class="button is-inverse has-fixed-icon" data-title="Paste address from clipboard"     style="margin-right:10px; height:43px; width:43px;" onclick="paste('#new-contact-address')"><i class="fa fa-files-o"></i></a>
                 <a class="button is-inverse has-fixed-icon" data-title="Remove this recipient"            style="height:43px; width:43px;" onclick="$('#new-contact-address').val('').css('background', '').css('color', '');"><i class="fa fa-times"></i></a>
@@ -587,7 +561,8 @@
         <!-- Messages Page -->
         <article id="messages" style="display:none;">
             <div class="content top">
-                <h2>ShadowChat</h2>
+                <h2>Chat</h2>
+				<p>Chat privately and securely with others using MOIN's encrypted instant messaging system.</p>
             </div>
 
             <div class="bottom">
@@ -627,7 +602,7 @@
                         <li class="other-message">
                                 <span class="info">
                                     <img src="qrc:///images/default">
-                                    <span class="user-name">SDCDev</span>
+                                    <span class="user-name">MOINDev</span>
                                 </span>
                                 <span class="message-content">
                                     <span class="timestamp">1-09-2014 14:57</span>
@@ -646,7 +621,7 @@
                             <a href="#" class="italic" onclick="editorCommand('*', '*');"><i class="fa fa-italic"></i></a>
                             <a href="#" class="underline" onclick="editorCommand('__', '__');"><i class="fa fa-underline"></i></a>
                             <!--a href="#" class="strikethrough" onclick="editorCommand('~~', '~~');"><i class="fa fa-strikethrough"></i></a-->
-                            <a href="#" class="link" onclick="editorCommand('[', '](http://shadow.cash)');"><i class="fa fa-link"></i></a>
+                            <a href="#" class="link" onclick="editorCommand('[', '](https://discovermoin.com)');"><i class="fa fa-link"></i></a>
                             <a href="#" class="image" onclick="editorCommand('![imageinfo](', ')');"><i class="fa fa-image"></i></a>
                         </div>
                         <div class="right-bar">
@@ -705,6 +680,7 @@
         <article id="chaindata" style="display:none;">
             <div class="content top">
                 <h2>Chain Data</h2>
+                               <p>Information on the number of anonymous outputs available for private MOINX transactions.</p>
             </div>
 
             <div class="bottom">
@@ -717,19 +693,19 @@
                     <table class="footable shadow" data-page=false data-filter="#filter-outputs">
                         <thead>
                             <tr>
-                                <th data-toggle="true"       data-type="numeric" data-title="Coin Value" data-sort-initial="ascending">Coin Value</th>
-                                <th data-hide="phone,tablet" data-type="numeric" data-title="No. Owned Mature">Owned (Mature)</th>
-                                <th data-hide="phone"        data-type="numeric" data-title="No. System Mature">System (Mature)</th>
-                                <th                          data-type="numeric" data-title="No. Spends">Spends</th>
-                                <th data-hide="phone"        data-type="numeric" data-title="Chain Least Depth">Least Depth</th>
+                                <th data-toggle="true"       data-type="numeric" title="Coin Value" data-sort-initial="ascending">Coin Value</th>
+                                <th data-hide="phone,tablet" data-type="numeric" title="No. Owned Mature">Owned (Mature)</th>
+                                <th data-hide="phone"        data-type="numeric" title="No. System Mature">System (Mature)</th>
+                                <th                          data-type="numeric" title="No. Spends">Spends</th>
+                                <th data-hide="phone"        data-type="numeric" title="Chain Least Depth">Least Depth</th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5" style="background:#E5203D!important;">
-                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                <td colspan="5" style="background:#131218!important;">
+                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -739,13 +715,13 @@
         </article><!-- /chaindata page -->
 
         <div id="blkexp-txn-modal" style="display:none;">
-            <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
+            <a class="modal_close" href="#close"><i class="fa fa-times-circle grey"></i></a>
             <div class="ng-scope" data-ng-if="block.hash">
                 <div class="well well-sm ellipsis">
-                  <h2>Transaction Hash</h2>
+                  <h2>Transaction Hash</h2> 
                   <span class="text-muted" id="txn-hash"></span>
                 </div>
-                </br></br>
+                </br></br>    
                 <h2>Summary</h2>
                 <div class="row">
                   <div class="col-md-6">
@@ -762,7 +738,7 @@
                       <tr class="modal-tr">
                         <td><strong>Mined Time</strong></td>
                         <td class="text-muted" id="txn-minetime"></td>
-                      </tr>
+                      </tr> 
                       <tr class="modal-tr">
                         <td><strong>Included in Block</strong></td>
                         <td class="text-muted" id="txn-blkhash"></td>
@@ -799,8 +775,8 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="2" style="background:#E5203D!important;">
-                                            <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                        <td colspan="2" style="background:#131218!important;">
+                                            <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -818,8 +794,8 @@
                                   </tbody>
                                   <tfoot>
                                       <tr>
-                                          <td colspan="2" style="background:#E5203D!important;">
-                                              <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                          <td colspan="2" style="background:#131218!important;">
+                                              <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                           </td>
                                       </tr>
                                   </tfoot>
@@ -834,14 +810,14 @@
 
 
         <div id="block-info-modal" style="display:none;">
-            <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
+            <a class="modal_close" href="#close"><i class="fa fa-times-circle grey"></i></a>
             <div class="shadow" id="block-info"></div>
             <div class="ng-scope" data-ng-if="block.hash">
                 <div class="well well-sm ellipsis">
-                  <h2>BlockHash</h2>
+                  <h2>BlockHash</h2> 
                   <span class="text-muted" id="blk-hash"></span>
                 </div>
-                </br></br>
+                </br></br>    
                 <h2>Summary</h2>
                 <div class="row">
                   <div class="col-md-6">
@@ -858,7 +834,7 @@
                       <tr class="modal-tr">
                         <td><strong>Block Type</strong></td>
                         <td class="text-muted" id="blk-type"></td>
-                      </tr>
+                      </tr> 
                       <tr class="modal-tr">
                         <td><strong>Block Reward</strong></td>
                         <td class="text-muted" id="blk-reward"></td>
@@ -906,7 +882,7 @@
                 </div>
               </div>
         </div>
-
+                
         <!-- Block Explorer Page -->
         <article id="blockdata" style="display:none;">
             <div class="content top">
@@ -915,7 +891,7 @@
             <div class="bottom">
                 <div class="content">
                     <div>
-                    <input id="filter-blocks" style="width:75%;height:40px;padding:0 10px;vertical-align:top;" placeholder="Find Block by hash/height/transaction" onkeydown="if (event.keyCode == 13) blockExplorerPage.findBlock( this.value );" onblur="blockExplorerPage.findBlock(this.value);" />&nbsp;&nbsp;&nbsp;<img id="refreshIcon" width="24" height="24" style="cursor:default; position:relative; top:8px;"  src="qrc:///icons/syncing_static" data-title="Refresh Latest Blocks" onmouseover="this.src='qrc:///icons/syncing'" onmouseout="this.src='qrc:///icons/syncing_static'" onclick=" $('#filter-blocks').val(''); blockExplorerPage.updateLatestBlocks();" /></div>
+                    <input id="filter-blocks" style="width:75%;height:40px;padding:0 10px;vertical-align:top;" placeholder="Find Block by hash/height/transaction" onkeydown="if (event.keyCode == 13) blockExplorerPage.findBlock( this.value );" onblur="blockExplorerPage.findBlock(this.value);" />&nbsp;&nbsp;&nbsp;<img id="refreshIcon" width="24" height="24" style="cursor:default; position:relative; top:8px;"  src=""qrc:///icons/syncing_static" data-title="Refresh Latest Blocks" onmouseover="this.src='"qrc:///icons/syncing'" onmouseout="this.src='"qrc:///icons/syncing_static'" onclick=" $('#filter-blocks').val(''); blockExplorerPage.updateLatestBlocks();" /></div>
                     <table id="latest-blocks-table" class="footable shadow" data-page=false data-filter="#filter-outputs">
                         <thead>
                             <tr>
@@ -929,8 +905,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4" style="background:#E5203D!important;">
-                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                <td colspan="4" style="background:#131218!important;">
+                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -947,8 +923,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2" style="background:#E5203D!important;">
-                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
+                                <td colspan="2" style="background:#131218!important;">
+                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -956,167 +932,6 @@
                 </div><!-- /content -->
             </div><!-- /bottom -->
         </article><!-- Block Explorer Page -->
-
-        <div id="import-key-modal" style="display:none;" class="content">
-            <a class="heading-selected">Import BIP Key</a>
-            <br/>
-            <a class="modal_close" href="#close"><i class="fa fa-times-circle red"></i></a>
-            <div style="white-space:nowrap;"></br>
-                <div style="white-space: pre-wrap; line-height: 1em;">Some bip information</div><br/>
-
-                <label for="import-bip39-mnemonic" class="recipient">BIP39 Mnemonic: </label>
-                <input id="import-bip39-mnemonic"  class="recipient input_box" style="width: 450px; height: 40px;" data-title="Enter the twelve word mnemonic you wish to import" placeholder="Enter the twelve word mnemonic you wish to import"/><br>
-                <label for="ximport-bip39-passphrase"  class="recipient">Passphrase (Optional): </label>
-                <input id="ximport-bip39-passphrase"  class="recipient input_box" style="width: 450px; height: 40px;" data-title="Enter a passphrase for the bip39 mnemonic" placeholder="Enter a passphrase for the bip39 mnemonic"   onchange="" /></br>
-
-                <label class="recipient" for="import-bip32-genkey">BIP32 Generated rootkey: </label>
-                <input id="import-bip32-genkey" class="recipient input_box" style="width: 450px; height: 40px;" data-title="" placeholder=""/></br>
-
-            </div>
-            <div style="white-space:nowrap;">
-                <a class="button is-inverse has-icon-spacing" href=""><i class="fa fa-check"></i>Generate</a>
-                <span id="import-result" style="width:300px"></span>
-            </div>
-
-
-        </div>
-
-        <!-- Key Management Page -->
-        <article id="keymanagement" style="display:none;">
-            <div class="content top">
-                <h2>Key Management</h2>
-            </div>
-            <div class="bottom">
-                <div class="content">
-                    <div id="key-options">
-                        <h3> Please select one of the following options: </h3>
-                        <div class="optionblock" alt="New Key"     onclick="$('#key-options').hide(); $('#wizards').show();gotoWizard('new-key-wizard', 0, true);resizeFooter();"/><i class="fa green font-150px fa-plus-square"></i>New Key </div>
-                        <div class="optionblock" onclick="$('#key-options').hide(); $('#wizards').show();gotoWizard('recover-key-wizard', 0, true);resizeFooter();"/><i class="fa red font-150px fa-ambulance"></i>Recover     </div>
-                        <div class="optionblock" onclick="$('#key-options').hide(); $('#wizards').hide(); $('#keymanagement-advanced').show(); keyManagementPage.updateKeyList(); keyManagementPage.updateAccountList(); resizeFooter(); "/><i class="fa blue font-150px fa-laptop"></i> Advanced management</div>
-                    </div>
-
-                    <div id="wizards" style="display:none">
-                        <div id="new-key-wizard" class="wizardblock" style="display:none">
-                            <div>
-                                <h3>Lets create a new key and account</h3>
-                                <h2>Give your new key and account a label and a password</h2>
-                                <label for="new-account-label" class="recipient">Label: </label>
-                                <input id="new-account-label"  class="recipient input_box" style="width: 450px; height: 40px;" data-title="Label for key/account" ></br>
-                                <label for="new-account-passphrase" class="recipient">Passphrase (Optional): </label>
-                                <input id="new-account-passphrase" type="password"  class="recipient input_box" style="width: 450px; height: 40px;" data-title="Enter a passphrase for the bip39 mnemonic" ></br>
-                                <div class="option">
-                                    <label for="new-account-bip44" class="recipient">BIP44:</label>
-                                    <input  id="new-account-bip44" class="option" type="checkbox" data-title="Would you like to create a bip44 path?" checked />
-                                    <label for="new-account-bip44" style="vertical-align: initial;">Would you like to create a Multi-Account HD Key?</label><!-- checkbox / FontAwesome hack -->
-                                </div>
-                                <label for="new-account-language" class="recipient">Language: </label>
-                                <select id="new-account-language" class="button is-inverse has-fixed-icon"  style="width:25%;height:40px;padding:0 10px;margin-bottom:10px;">
-                                    <option value="1" title="English">English</option>
-                                    <option value="2" title="French">French</option>
-                                    <option value="3" title="Japanese">Japanese</option>
-                                    <option value="4" title="Spanish">Spanish</option>
-                                    <option value="5" title="Chinese (Simplified)">Chinese (Simplified)</option>
-                                    <option value="6" title="Chinese (Traditional)">Chinese (Traditional)</option>
-                                </select>
-                            </div>
-                            <div stepJS="keyManagementPage.newMnemonic();">
-                                <h3>Here is your 24 word account mnemonic </h3>
-                                <textarea id="new-key-mnemonic" style="line-height: 20px; width:90%; height:100px; font-family: 'Open Sans', 'NotoCJK Japanese', 'NotoCJK Chinese simplified', 'NotoCJK Chinese traditional';" class="input_box" placeholder="24 word mnemonic" data-title="Your 24 word mnemonic ( Keep this safe! )" readonly></textarea><br/>
-                                <p>It is very important to write this down as this is the only backup you will need for your wallet. You will be asked to confirm the seed in the next screen to ensure it has been copied down correctly</p>
-                            </div>
-                            <div validateJS="keyManagementPage.compareMnemonics();">
-                                <h3>Please re-enter your 24 word mnemonic from earlier</h3>
-                                <textarea id="validate-key-mnemonic" style="line-height: 20px; width:90%; height:100px; font-family: 'Open Sans', 'NotoCJK Japanese', 'NotoCJK Chinese simplified', 'NotoCJK Chinese traditional';" class="input_box" placeholder="24 word mnemonic" data-title="24 word mnemonic"></textarea><br/>
-                                <p>We really want to make sure that you have copied these 24 words down correctly as this will serve as a means to recover your wallet if you should ever lose it. </p>
-                            </div>
-                            <div stepJS="keyManagementPage.newKey();" endWiz=" keyManagementPage.gotoPage('overview'); " >
-                                <h3>Congratulations! You have successfully created a new wallet account</h3>
-                                <p>You can now use your account to send and receive funds :) Remember to keep your 24 word mnemonic and passphase safe in case you ever need to recover your wallet </p></br>
-
-<!-- TODO: Implement a SET DEFAULT / SET MASTER option at the end of the wizard -->
-<!--                                <input id="new-key-make-default" type="checkbox" checked>
-                                <label for="new-key-make-default" class="option">Make this account the default</label> -->
-                            </div>
-                        </div>
-                        <div id="recover-key-wizard" class="wizardblock" style="display:none">
-                            <div validateJS="keyManagementPage.recoverKey();">
-                                <h3>Lets recover your account</h3>
-
-                                <label for="recover-account-label" class="recipient">Label: </label>
-                                <input id="recover-account-label"  class="recipient input_box" style="width: 550px; height: 40px;" data-title="Label for recovered account"></br>
-                                <label for="recover-passphrase" class="recipient">Passphrase (Optional): </label>
-                                <input id="recover-passphrase"  class="recipient input_box" style="width: 550px; height: 40px;" type="password" data-title="Enter the passphrase for the wallet you are trying to recover" ></br>
-
-                                <div class="option">
-                                    <label for="recover-bip44" class="recipient">BIP44:</label>
-                                    <input  id="recover-bip44" class="option" type="checkbox" data-title="Is this a bip44 path?" checked />
-                                    <label for="recover-bip44" style="vertical-align: initial;">Is this a Multi-Account HD Key?</label><!-- checkbox / FontAwesome hack -->
-                                </div>
-                                <textarea id="recover-key-mnemonic" style="line-height: 20px; width:90%; height:100px; font-family: 'Open Sans', 'NotoCJK Japanese', 'NotoCJK Chinese simplified', 'NotoCJK Chinese traditional';" class="input_box" placeholder="Your 24 word mnemonic for recovery" data-title="Your 24 word mnemonic for recovery"></textarea></br>
-                            </div>
-                            <div endWiz="keyManagementPage.gotoPage('overview');">
-                                <h3>Congratulations! You have successfully recovered your wallet from your 24 word mnemonic</h3>
-                                <p>You can now use your account to send and receive funds :) Remember to keep your 24 work mnemonic and passphase safe in case you ever need to recover your wallet again!</p></br>
-<!--                                <input id="recover-key-make-default" type="checkbox" checked>
-                                <label for="recover-key-make-default" class="option">Make this account the default</label> -->
-                            </div>
-                        </div>
-                    </div>
-                    <div id="keymanagement-advanced" style="display:none">
-                        <h3>Accounts </h3>
-                        <table id="extkey-account-table" class="footable shadow" data-page=false>
-                            <thead>
-                                <tr>
-                                    <th data-toggle="true"  data-title="ID" data-sort-initial="ascending">ID</th>
-                                    <th data-toggle="true"  data-title="Label" data-sort-initial="ascending">Label</th>
-                                    <th data-toggle="true"  data-title="Created" data-sort-initial="ascending">Created</th>
-                                    <th data-toggle="true"  data-title="Active Account" data-sort-initial="ascending">Active Account</th>
-                                    <th data-toggle="true"  data-title="Default" data-sort-initial="ascending">Default</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="5" style="background:#E5203D!important;">
-                                        <div class="pagination pagination-centered hide-if-no-paging"></div>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        </br>
-                        <h3>Keys </h3>
-                        <table id="extkey-table" class="footable shadow" data-page=false>
-                            <thead>
-                                <tr>
-                                    <th data-toggle="true"  data-title="ID" data-sort-initial="ascending">ID</th>
-                                    <th data-toggle="true"  data-title="Label" data-sort-initial="ascending">Label</th>
-                                    <th data-toggle="true"  data-title="Path" data-sort-initial="ascending">Path</th>
-                                    <th data-toggle="true"  data-title="Active" data-sort-initial="ascending">Active</th>
-                                    <th data-toggle="true"  data-title="Master" data-sort-initial="ascending">Master</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="5" style="background:#E5203D!important;">
-                                        <div class="pagination pagination-centered hide-if-no-paging"></div>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <div class="ui-buttons">
-                            <a id="btn-make-default-key" class="button is-inverse has-icon-spacing" href="#" onclick="keyManagementPage.setDefault();"><i class="fa fa-pencil-square-o"></i>Make Default</a>
-                            <a id="btn-activate-deactivate" class="button is-inverse has-icon-spacing" href="#" onclick="keyManagementPage.changeActiveFlag();"><i class="fa fa-pencil-square-o"></i>Activate/Deactivate</a>
-                            <a id="btn-set-master" class="button is-inverse has-icon-spacing" href="#" onclick="keyManagementPage.setMaster();"><i class="fa fa-pencil-square-o"></i>Set as Master</a>
-                        </div>
-                    </div>
-                </div> <!-- content -->
-            </div><!-- bottom -->
-        </article><!-- Key Management Page -->
-
-
 
 
         <!-- Options Page -->
@@ -1133,7 +948,7 @@
 
                         <div class="option">
                             <input  id="optStartAtStartup" type="checkbox" />
-                            <label for="optStartAtStartup" class="option">Start Shadow on system login</label>
+                            <label for="optStartAtStartup" class="option">Start Moin on system login</label>
                         </div>
                         <div class="option">
                             <input  id="optDetachDatabases" type="checkbox" />
@@ -1144,10 +959,10 @@
                             <label for="optFee" class="option">Pay transaction fee:</label>
                             <input  id="optFee" type="number" placeholder="0.00000000" step="0.01" value="0.00000000" onchange="unit.parse(this, $('#optFeeunit').val());" />
                             <select id="optFeeunit" class="unit button is-inverse has-fixed-icon" style="margin-left:10px; height:43px; width:100px;" onchange="unit.format('#optFee', $(this).val());">
-                                <option value="0" title="Shadow">SDC</option>
-                                <option value="1" title="Milli-Shadow (1 / 1000)">mSDC</option>
-                                <option value="2" title="Micro-Shadow (1 / 1000000)">&micro;SDC</option>
-                                <option value="3" title="Shadowshi (1 / 100000000)">Shadowshi</option>
+                                <option value="0" title="Moin">MOIN</option>
+                                <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
+                                <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
+                                <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
                             </select>
                         </div>
                         <div class="option">
@@ -1159,10 +974,10 @@
                             <label for="optReserveBalance" class="option">Reserve:</label>
                             <input  id="optReserveBalance" type="number" placeholder="0.00000000" step="0.01" value="0.00000000" onchange="unit.parse(this, $('#optReserveBalanceunit').val());" />
                             <select id="optReserveBalanceunit" class="unit button is-inverse has-fixed-icon" style="margin-left:10px; height:43px; width:100px;" onchange="unit.format('#optReserveBalance', $(this).val());">
-                                <option value="0" title="Shadow">SDC</option>
-                                <option value="1" title="Milli-Shadow (1 / 1000)">mSDC</option>
-                                <option value="2" title="Micro-Shadow (1 / 1000000)">&micro;SDC</option>
-                                <option value="3" title="Shadowshi (1 / 100000000)">Shadowshi</option>
+                                <option value="0" title="Moin">MOIN</option>
+                                <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
+                                <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
+                                <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
                             </select>
                         </div>
                         <div class="option">
@@ -1178,8 +993,8 @@
                             <input  id="optMaxRingSize" type="number" max="200" placeholder="100" step="1" />
                         </div>
                         <!--div class="option">
-                            <input  id="optAutoRedeemShadow" type="checkbox" data-title="Shadow will be converted to SDC as soon as has confirmed and wallet is unlocked" />
-                            <label for="optAutoRedeemShadow" class="option" data-title="Shadow will be converted to SDC as soon as has confirmed and wallet is unlocked">Auto-redeem shadow</label>
+                            <input  id="optAutogreyeemMOINX" type="checkbox" data-title="MOINX will be converted to MOIN as soon as has confirmed and wallet is unlocked" />
+                            <label for="optAutogreyeemMOINX" class="option" data-title="MOINX will be converted to MOIN as soon as has confirmed and wallet is unlocked">Auto-greyeem moinX</label>
                         </div-->
                         <div class="option">
                             <input  id="optAutoRingSize" type="checkbox" data-title="Automatically select ring size based on best available output counts" />
@@ -1258,10 +1073,10 @@
                         <div class="option">
                             <label for="optDisplayUnit" class="option" style="width:200px;text-align:right;">Unit to show amounts in:</label>
                             <select id="optDisplayUnit" class="button is-inverse has-fixed-icon" style="width:200px;">
-                                <option value="0" title="Shadow">SDC</option>
-                                <option value="1" title="Milli-Shadow (1 / 1000)">mSDC</option>
-                                <option value="2" title="Micro-Shadow (1 / 1000000)">&micro;SDC</option>
-                                <option value="3" title="Shadowshi (1 / 100000000)">Shadowshi</option>
+                                <option value="0" title="Moin">MOIN</option>
+                                <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
+                                <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
+                                <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
                             </select>
                         </div>
                         <div class="option">
@@ -1278,9 +1093,9 @@
                                 <!--optgroup label="Transactions">
                                     <option>Received with</option>
                                     <option>Received from</option>
-                                    <option>Received Shadow</option>
+                                    <option>Received MOINX</option>
                                     <option>Sent to</option>
-                                    <option>Sent Shadow</option>
+                                    <option>Sent MOINX</option>
                                     <option>Stake</option>
                                     <option>Other</option>
                                 </optgroup>
@@ -1296,9 +1111,9 @@
                             <select id="optVisibleTransactions" class="button is-inverse has-fixed-icon" multiple size="7">
                                 <!--option>Received with</option>
                                 <option>Received from</option>
-                                <option>Received Shadow</option>
+                                <option>Received MOINX</option>
                                 <option>Sent to</option>
-                                <option>Sent Shadow</option>
+                                <option>Sent MOINX</option>
                                 <option>Stake</option>
                                 <option>Other</option-->
                             </select>
@@ -1312,30 +1127,37 @@
                     </div>
                 </div><!-- /content -->
             </div><!-- /bottom -->
-        </article><!-- /options page -->
+        </article><!-- /chaindata page -->
 
 
         <!-- News Page -->
         <article id="news" style="display:none;">
             <div class="content top">
                 <h2>News</h2>
+				<p>News and updates from the MOIN team. </p>
             </div>
 
             <div class="bottom">
 
                 <div class="content flex">
+              <div class="flex-item grow one-third-width">
+                            <h2>Announcements</h2>
 
+                            <div id="announcements">
+
+                            </div>
+                        </div>
                 </div><!-- /content -->
             </div><!-- /bottom -->
         </article><!-- /news page -->
 
         <div id="footer">
             <span id="footer-icons">
-                <i id="encryptionIcon"    style="padding-right:5px;" class="fa fa-lock fa-lg cursor-pointer red" onclick="bridge.userAction(['toggleLock']);" data-title="Wallet is encrypted and currently locked"></i>
+                <i id="encryptionIcon"    style="padding-right:5px;" class="fa fa-lock fa-lg cursor-pointer grey" onclick="bridge.userAction(['toggleLock']);" data-title="Wallet is encrypted and currently locked"></i>
                 <i id="stakingIcon"       style="padding-right:5px;" class="fa fa-cog fa-lg not-staking" data-title="Not staking because wallet is locked"></i>
-                <img id="connectionsIcon" style="cursor:default; padding-right:5px" src="qrc:///icons/connect_0"/ data-title="0 active connection(s) to ShadowCoin network" />
-                <img id="syncingIcon"     style="cursor:default;"                  src="qrc:///icons/syncing"/ data-title="Wallet is syncing" />
-                <i id="blocksIcon" class="fa fa-check red none" data-title="Wallet is syncing"></i>
+                <img id="connectionsIcon" style="cursor:default; padding-right:5px" src="qrc:///icons/connect_0"/ data-title="0 active connection(s) to Moin network" />
+                <img id="syncingIcon"     style="cursor:default;"                  src="qrc:///icons/syncing_small"/ data-title="Wallet is syncing" />
+                <i id="blocksIcon" class="fa fa-check grey none" data-title="Wallet is syncing"></i>
             </span>
         </div><!-- /footer -->
         <div id="network-alert" style="display:none;">

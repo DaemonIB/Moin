@@ -11,7 +11,7 @@
   border-radius: 0;
 }
 .footable.breakpoint > tbody > tr.footable-row-detail {
-  background: #eeeeee;
+ background: #eeeeee;
 }
 .footable.breakpoint > tbody > tr:hover:not(.footable-row-detail) {
   cursor: pointer;
@@ -23,10 +23,10 @@
   vertical-align: middle;
 }
 .footable > tbody > tr:hover:not(.footable-row-detail) {
-  background: #dddddd;
+ background: #dddddd;
 }
 .footable > tbody > tr:hover:not(.footable-row-detail) > td {
-  color: #000000;
+ color: #000000;
 }
 .footable > tbody > tr:last-child > td {
   border-bottom: none;
@@ -97,7 +97,7 @@
   color: #888;
 }
 .footable > tfoot .pagination ul > li.active > a {
-  border-color: #ffffff;
+border-color: #ffffff;
 }
 .footable > tfoot .pagination ul > li:first-child > a,
 .footable > tfoot .pagination ul > li:last-child > a,

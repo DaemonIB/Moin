@@ -8,7 +8,7 @@ class AddressTablePriv;
 class CWallet;
 class WalletModel;
 
-enum EAddressType {
+enum AddressType {
     AT_Unknown = 0, /**< User specified label */
     AT_Normal = 1,  /**< Bitcoin address */
     AT_Stealth = 2,  /**< Stealth address */
@@ -24,7 +24,7 @@ class AddressTableModel : public QAbstractTableModel
 public:
     explicit AddressTableModel(CWallet *wallet, WalletModel *parent = 0);
     ~AddressTableModel();
-    
+
     enum ColumnIndex {
         Label = 0,   /**< User specified label */
         Address = 1,  /**< Bitcoin address */

@@ -121,16 +121,15 @@
             var ft = p.footable,
                 $table = $(ft.table);
 
-            $table.find('> tbody > tr:not(.footable-row-detail)').removeClass('footable-filtered').each(function () {
-                p.showRow(this, ft);
-            });
+               $table.find('> tbody > tr:not(.footable-row-detail)').removeClass('footable-filtered').each(function () {
+                    p.showRow(this, ft);
+                });
             $table.removeData('filter-string');
             ft.raise('footable_filtered', { clear: true });
         };
 
         p.showRow = function (row, ft) {
             var $row = $(row), $next = $row.next(), $table = $(ft.table);
-            if ($row.is(':visible')) return; //already visible - do nothing
             if ($table.hasClass('breakpoint') && $row.hasClass('footable-detail-show') && $next.hasClass('footable-row-detail')) {
                 $row.add($next).show();
                 ft.createOrUpdateDetailRow(row);

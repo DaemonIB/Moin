@@ -35,8 +35,7 @@ ParseScript(string s)
         for (int op = OP_NOP; op <= OP_NOP9; op++)
         {
             const char* name = GetOpName((opcodetype)op);
-            if (strcmp(name, "OP_UNKNOWN") == 0
-              ||strcmp(name, "OP_CHECKLOCKTIMEVERIFY") == 0)
+            if (strcmp(name, "OP_UNKNOWN") == 0)
                 continue;
             string strName(name);
             mapOpNames[strName] = (opcodetype)op;
@@ -449,3 +448,4 @@ BOOST_AUTO_TEST_CASE(script_combineSigs)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+

@@ -1,5 +1,5 @@
 ---
-name: "shadow-deps"
+name: "moin-deps"
 suites:
 - "trusty"
 architectures:
@@ -171,5 +171,5 @@ script: |
     done
     #
     cd $INSTALLPREFIX
-    find include lib | sort | tar --no-recursion -cJf $OUTDIR/shadow-deps-win$BITS-gitian.tar.xz -T -  
+    find include lib | sort | tar --no-recursion -cJf $OUTDIR/moin-deps-win$BITS-gitian.tar.xz -T -  
   done # for BITS in

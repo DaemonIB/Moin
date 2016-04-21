@@ -17,10 +17,10 @@ public:
      */
     enum Unit
     {
-        SDC,
-        mSDC,
-        uSDC,
-        sSDC
+        MOIN,
+        mMOIN,
+        uMOIN,
+        sMOIN
     };
 
     //! @name Static API

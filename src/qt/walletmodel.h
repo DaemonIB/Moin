@@ -24,10 +24,10 @@ QT_END_NAMESPACE
 
 enum eTxnTypeInd
 {
-    TXT_SDC_TO_SDC = 0,
-    TXT_SDC_TO_ANON,
+    TXT_MOIN_TO_MOIN = 0,
+    TXT_MOIN_TO_ANON,
     TXT_ANON_TO_ANON,
-    TXT_ANON_TO_SDC,
+    TXT_ANON_TO_MOIN,
 };
 
 class SendCoinsRecipient
@@ -66,7 +66,7 @@ public:
         InputTypeError,
         SCR_NeedFullMode,
         SCR_StealthAddressFail,
-        SCR_AmountWithFeeExceedsShadowBalance,
+        SCR_AmountWithFeeExceedsMoinXBalance,
         SCR_Error,
         SCR_ErrorWithMsg,
         Aborted
@@ -84,7 +84,7 @@ public:
     TransactionTableModel *getTransactionTableModel();
 
     qint64 getBalance() const;
-    qint64 getShadowBalance() const;
+    qint64 getMoinXBalance() const;
     qint64 getStake() const;
     qint64 getUnconfirmedBalance() const;
     qint64 getImmatureBalance() const;
@@ -163,7 +163,7 @@ private:
 
     // Cache some values to be able to detect changes
     qint64 cachedBalance;
-    qint64 cachedShadowBal;
+    qint64 cachedMoinXBal;
     qint64 cachedStake;
     qint64 cachedUnconfirmedBalance;
     qint64 cachedImmatureBalance;
@@ -190,7 +190,7 @@ public slots:
 
 signals:
     // Signal that balance in wallet changed
-    void balanceChanged(qint64 balance, qint64 shadowBal, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
+    void balanceChanged(qint64 balance, qint64 moinXBal, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
 
     // Number of transactions in wallet changed
     void numTransactionsChanged(int count);

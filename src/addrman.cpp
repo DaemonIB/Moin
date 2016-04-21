@@ -390,16 +390,16 @@ CAddress CAddrMan::Select_(int nUnkBias)
 {
     if (size() == 0)
         return CAddress();
-    
-    int nTries = fTestNet ? 100 : 100000;
-    
+
+    int nTries = fTestNet ? 100: 100000;
+
     double nCorTried = sqrt(nTried) * (100.0 - nUnkBias);
     double nCorNew = sqrt(nNew) * nUnkBias;
     if ((nCorTried + nCorNew)*GetRandInt(1<<30)/(1<<30) < nCorTried)
     {
         // use a tried node
         double fChanceFactor = 1.0;
-        for (int i = 0; i < nTries; ++i)
+        for (int i = 0; i < nTries; ++i) 
         {
             int nKBucket = GetRandInt(vvTried.size());
             std::vector<int> &vTried = vvTried[nKBucket];
@@ -415,7 +415,7 @@ CAddress CAddrMan::Select_(int nUnkBias)
     {
         // use a new node
         double fChanceFactor = 1.0;
-        for (int i = 0; i < nTries; ++i)
+        for (int i = 0; i < nTries; ++i) 
         {
             int nUBucket = GetRandInt(vvNew.size());
             std::set<int> &vNew = vvNew[nUBucket];
@@ -431,7 +431,7 @@ CAddress CAddrMan::Select_(int nUnkBias)
             fChanceFactor *= fTestNet ? 12 : 1.2;
         };
     };
-    
+
     return CAddress();
 }
 

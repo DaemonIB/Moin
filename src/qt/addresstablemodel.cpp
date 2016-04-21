@@ -63,9 +63,9 @@ public:
 
                 if (strName.startsWith("ao "))
                     continue;
-
+                
                 QString strAddress(QString::fromStdString(address.ToString()));
-
+                                
                 int8_t addrType;
                 QString strPubkey;
                 if (address.IsBIP32())
@@ -76,14 +76,14 @@ public:
                     addrType = AT_Normal;
                     strPubkey = parent->pubkeyForAddress(strAddress, false);
                 };
-
+                
                 cachedAddressTable.append(
                     AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
                     strName,
                     strAddress,
                     strPubkey,
                     addrType));
-            };
+            }; 
 
             std::set<CStealthAddress>::iterator it;
             for (it = wallet->stealthAddresses.begin(); it != wallet->stealthAddresses.end(); ++it)
@@ -96,7 +96,7 @@ public:
                     "",
                     AT_Stealth));
             };
-
+            
             ExtKeyAccountMap::const_iterator mi;
             for (mi = wallet->mapExtAccounts.begin(); mi != wallet->mapExtAccounts.end(); ++mi)
             {
@@ -116,8 +116,8 @@ public:
                         AT_Stealth));
                 };
             };
-
-
+            
+            
         } // cs_wallet
         // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
         qSort(cachedAddressTable.begin(), cachedAddressTable.end(), AddressTableEntryLessThan());
@@ -125,7 +125,7 @@ public:
 
     void updateEntry(const QString &address, const QString &label, bool isMine, int status)
     {
-        if (label.startsWith("ao "))
+        if (address.startsWith("ao "))
             return;
 
         // Find address / label in model
@@ -148,9 +148,8 @@ public:
                 LogPrintf("Warning: AddressTablePriv::updateEntry: Got CT_NEW, but entry is already in model\n");
                 break;
             };
-
             parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex);
-
+            
             int8_t addrType;
             QString strPubkey;
             if (IsBIP32(address.toStdString().c_str()))
@@ -163,9 +162,8 @@ public:
                 addrType = AT_Normal;
                 strPubkey = parent->pubkeyForAddress(address, false);
             };
-
+            
             cachedAddressTable.insert(lowerIndex, AddressTableEntry(newEntryType, label, address, strPubkey, addrType));
-
             parent->endInsertRows();
             }
             break;
@@ -273,7 +271,7 @@ QVariant AddressTableModel::data(const QModelIndex &index, int role) const
             return Receive;
         default: break;
         }
-    } else
+    } else 
     if (role == AddressTypeRole)
         return rec->addressType;
 
@@ -501,7 +499,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
         } else
         {
             CPubKey newKey;
-            if (0 != wallet->NewKeyFromAccount(newKey))
+            if (0 !=wallet->NewKeyFromAccount(newKey))
             {
                 editStatus = KEY_GENERATION_FAILURE;
                 return QString();
@@ -576,6 +574,7 @@ QString AddressTableModel::labelForAddress(const QString &address) const
             std::set<CStealthAddress>::iterator it(wallet->stealthAddresses.find(sxAddr));
             if (it != wallet->stealthAddresses.end())
                 return QString::fromStdString(it->label);
+
 
         } else
         {

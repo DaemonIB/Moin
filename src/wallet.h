@@ -229,7 +229,7 @@ public:
     void ReacceptWalletTransactions();
     void ResendWalletTransactions(bool fForce = false);
     int64_t GetBalance() const;
-    int64_t GetShadowBalance() const;
+    int64_t GetMoinXBalance() const;
     
     int64_t GetUnconfirmedBalance() const;
     int64_t GetImmatureBalance() const;
@@ -266,14 +266,14 @@ public:
     bool GetAnonChangeAddress(CStealthAddress& sxAddress);
     bool CreateStealthOutput(CStealthAddress* sxAddress, int64_t nValue, std::string& sNarr, std::vector<std::pair<CScript, int64_t> >& vecSend, std::map<int, std::string>& mapNarr, std::string& sError);
     bool CreateAnonOutputs(CStealthAddress* sxAddress, int64_t nValue, std::string& sNarr, std::vector<std::pair<CScript, int64_t> >& vecSend, CScript& scriptNarration);
-    int PickAnonInputs(int rsType, int64_t nValue, int64_t& nFee, int nRingSize, CWalletTx& wtxNew, int nOutputs, int nSizeOutputs, int& nExpectChangeOuts, std::list<COwnedAnonOutput>& lAvailableCoins, std::vector<COwnedAnonOutput*>& vPickedCoins, std::vector<std::pair<CScript, int64_t> >& vecChange, bool fTest, std::string& sError);
+    int PickAnonInputs(int64_t nValue, int64_t& nFee, int nRingSize, CWalletTx& wtxNew, int nOutputs, int nSizeOutputs, int& nExpectChangeOuts, std::list<COwnedAnonOutput>& lAvailableCoins, std::vector<COwnedAnonOutput*>& vPickedCoins, std::vector<std::pair<CScript, int64_t> >& vecChange, bool fTest, std::string& sError);
     int GetTxnPreImage(CTransaction& txn, uint256& hash);
     int PickHidingOutputs(int64_t nValue, int nRingSize, CPubKey& pkCoin, int skip, uint8_t* p);
     bool AreOutputsUnique(CWalletTx& wtxNew);
-    bool AddAnonInputs(int rsType, int64_t nTotalOut, int nRingSize, std::vector<std::pair<CScript, int64_t> >&vecSend, std::vector<std::pair<CScript, int64_t> >&vecChange, CWalletTx& wtxNew, int64_t& nFeeRequired, bool fTestOnly, std::string& sError);
-    bool SendSdcToAnon(CStealthAddress& sxAddress, int64_t nValue, std::string& sNarr, CWalletTx& wtxNew, std::string& sError, bool fAskFee=false);
+    bool AddAnonInputs(int64_t nTotalOut, int nRingSize, std::vector<std::pair<CScript, int64_t> >&vecSend, std::vector<std::pair<CScript, int64_t> >&vecChange, CWalletTx& wtxNew, int64_t& nFeeRequired, bool fTestOnly, std::string& sError);
+    bool SendMoinToAnon(CStealthAddress& sxAddress, int64_t nValue, std::string& sNarr, CWalletTx& wtxNew, std::string& sError, bool fAskFee=false);
     bool SendAnonToAnon(CStealthAddress& sxAddress, int64_t nValue, int nRingSize, std::string& sNarr, CWalletTx& wtxNew, std::string& sError, bool fAskFee=false);
-    bool SendAnonToSdc(CStealthAddress& sxAddress, int64_t nValue, int nRingSize, std::string& sNarr, CWalletTx& wtxNew, std::string& sError, bool fAskFee=false);
+    bool SendAnonToMoin(CStealthAddress& sxAddress, int64_t nValue, int nRingSize, std::string& sNarr, CWalletTx& wtxNew, std::string& sError, bool fAskFee=false);
     
     bool ExpandLockedAnonOutput(CWalletDB *pdb, CKeyID &ckeyId, CLockedAnonOutput &lao, std::set<uint256> &setUpdated);
     bool ProcessLockedAnonOutputs();
@@ -307,8 +307,8 @@ public:
 
     bool IsMine(const CTxIn& txin) const;
     int64_t GetDebit(const CTxIn& txin) const;
-    int64_t GetShadowDebit(const CTxIn& txin) const;
-    int64_t GetShadowCredit(const CTxOut& txout) const;
+    int64_t GetMoinXDebit(const CTxIn& txin) const;
+    int64_t GetMoinXCredit(const CTxOut& txout) const;
     
     bool IsMine(const CTxOut& txout) const
     {
@@ -347,7 +347,7 @@ public:
             if (tx.nVersion == ANON_TXN_VERSION
                 && txin.IsAnonInput())
             {
-                nDebit += GetShadowDebit(txin);
+                nDebit += GetMoinXDebit(txin);
             } else
             {
                 nDebit += GetDebit(txin);
@@ -367,7 +367,7 @@ public:
             if (tx.nVersion == ANON_TXN_VERSION
                 && txout.IsAnonOutput())
             {
-                nCredit += GetShadowCredit(txout);
+                nCredit += GetMoinXCredit(txout);
             } else
                 nCredit += GetCredit(txout);
             if (!MoneyRange(nCredit))
@@ -376,20 +376,20 @@ public:
         return nCredit;
     }
     
-    bool GetCredit(const CTransaction& tx, int64_t& nSDC, int64_t& nShadow) const
+    bool GetCredit(const CTransaction& tx, int64_t& nMOIN, int64_t& nMoinX) const
     {
-        nSDC = 0;
-        nShadow = 0;
+        nMOIN = 0;
+        nMoinX = 0;
         BOOST_FOREACH(const CTxOut& txout, tx.vout)
         {
             if (tx.nVersion == ANON_TXN_VERSION
                 && txout.IsAnonOutput())
             {
-                nShadow += GetShadowCredit(txout);
+                nMoinX += GetMoinXCredit(txout);
             } else
-                nSDC += GetCredit(txout);
-            if (!MoneyRange(nSDC)
-                || !MoneyRange(nShadow))
+                nMOIN += GetCredit(txout);
+            if (!MoneyRange(nMOIN)
+                || !MoneyRange(nMoinX))
                 throw std::runtime_error("CWallet::GetCredit() : value out of range");
         }
         return true;
@@ -459,7 +459,7 @@ public:
     int ExtKeyNew32(CExtKey &out, const char *sPassPhrase, int32_t nHash, const char *sSeed);
     int ExtKeyNew32(CExtKey &out, uint8_t *data, uint32_t lenData);
     
-    int ExtKeyImportLoose(CWalletDB *pwdb, CStoredExtKey &sekIn, bool fBip44, bool fSaveBip44);
+    int ExtKeyImportLoose(CWalletDB *pwdb, CStoredExtKey &sekIn);
     int ExtKeyImportAccount(CWalletDB *pwdb, CStoredExtKey &sekIn, int64_t nTimeStartScan, const std::string &sLabel);
     
     int ExtKeySetMaster(CWalletDB *pwdb, CKeyID &idMaster); // set master to existing key, remove master key tag from old key if exists
@@ -609,16 +609,16 @@ public:
     mutable bool fCreditCached;
     mutable bool fAvailableCreditCached;
     mutable bool fChangeCached;
-    mutable bool fAvailableShadowCreditCached;
+    mutable bool fAvailableMoinXCreditCached;
     mutable bool fCreditSplitCached;
     mutable int64_t nDebitCached;
     mutable int64_t nCreditCached;
     mutable int64_t nAvailableCreditCached;
     mutable int64_t nChangeCached;
-    mutable int64_t nAvailableShadowCreditCached;
+    mutable int64_t nAvailableMoinXCreditCached;
     
-    mutable int64_t nCredSDCCached;
-    mutable int64_t nCredShadowCached;
+    mutable int64_t nCredMOINCached;
+    mutable int64_t nCredMoinXCached;
     
     CWalletTx()
     {
@@ -655,17 +655,17 @@ public:
         fDebitCached = false;
         fCreditCached = false;
         fAvailableCreditCached = false;
-        fAvailableShadowCreditCached = false;
+        fAvailableMoinXCreditCached = false;
         
-        nCredSDCCached = 0;
-        nCredShadowCached = 0;
+        nCredMOINCached = 0;
+        nCredMoinXCached = 0;
         fCreditSplitCached = false;
         
         fChangeCached = false;
         nDebitCached = 0;
         nCreditCached = 0;
         nAvailableCreditCached = 0;
-        nAvailableShadowCreditCached = 0;
+        nAvailableMoinXCreditCached = 0;
         nChangeCached = 0;
         nOrderPos = -1;
     }
@@ -755,7 +755,7 @@ public:
     {
         fCreditCached = false;
         fAvailableCreditCached = false;
-        fAvailableShadowCreditCached = false;
+        fAvailableMoinXCreditCached = false;
         fDebitCached = false;
         fChangeCached = false;
         fCreditSplitCached = false;
@@ -832,26 +832,26 @@ public:
         return nCreditCached;
     }
     
-    bool GetCredit(int64_t& nCredSDC, int64_t& nCredShadow, bool fUseCache=true) const
+    bool GetCredit(int64_t& nCredMOIN, int64_t& nCredMoinX, bool fUseCache=true) const
     {
         // Must wait until coinbase is safely deep enough in the chain before valuing it
         if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0)
         {
-            nCredSDC = nCredShadow = 0;
+            nCredMOIN = nCredMoinX = 0;
             return true;
         }
         
         // GetBalance can assume transactions in mapWallet won't change
         if (!fUseCache || !fCreditSplitCached)
         {
-            nCredSDCCached = 0;
-            nCredShadowCached = 0;
-            pwallet->GetCredit(*this, nCredSDCCached, nCredShadowCached);
+            nCredMOINCached = 0;
+            nCredMoinXCached = 0;
+            pwallet->GetCredit(*this, nCredMOINCached, nCredMoinXCached);
             fCreditSplitCached = true;
         };
         
-        nCredSDC = nCredSDCCached;
-        nCredShadow = nCredShadowCached;
+        nCredMOIN = nCredMOINCached;
+        nCredMoinX = nCredMoinXCached;
         return true;
     }
 
@@ -881,14 +881,14 @@ public:
         return nCredit;
     };
     
-    int64_t GetAvailableShadowCredit(bool fUseCache=true) const
+    int64_t GetAvailableMoinXCredit(bool fUseCache=true) const
     {
         // Must wait until coinbase is safely deep enough in the chain before valuing it
         if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0)
             return 0;
         
-        if (fUseCache && fAvailableShadowCreditCached)
-            return nAvailableShadowCreditCached;
+        if (fUseCache && fAvailableMoinXCreditCached)
+            return nAvailableMoinXCreditCached;
         
         int64_t nCredit = 0;
         
@@ -910,12 +910,12 @@ public:
                 };
                 
                 if (!MoneyRange(nCredit))
-                    throw std::runtime_error("CWalletTx::GetAvailableShadowCredit() : value out of range");
+                    throw std::runtime_error("CWalletTx::GetAvailableMoinXCredit() : value out of range");
             };
         };
         
-        nAvailableShadowCreditCached = nCredit;
-        fAvailableShadowCreditCached = true;
+        nAvailableMoinXCreditCached = nCredit;
+        fAvailableMoinXCreditCached = true;
         return nCredit;
     };
 
@@ -1195,3 +1195,4 @@ public:
 };
 
 #endif
+

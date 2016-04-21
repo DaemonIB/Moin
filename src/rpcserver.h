@@ -210,15 +210,17 @@ extern json_spirit::Value clearwallettransactions(const json_spirit::Array& para
 extern json_spirit::Value scanforalltxns(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value scanforstealthtxns(const json_spirit::Array& params, bool fHelp);
 
-extern json_spirit::Value sendsdctoanon(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value sendmointoanon(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value sendanontoanon(const json_spirit::Array& params, bool fHelp);
-extern json_spirit::Value sendanontosdc(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value sendanontomoin(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value estimateanonfee(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value anonoutputs(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value anoninfo(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value reloadanondata(const json_spirit::Array& params, bool fHelp);
 
+
 extern json_spirit::Value txnreport(const json_spirit::Array& params, bool fHelp);
+
 
 extern json_spirit::Value smsgenable(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value smsgdisable(const json_spirit::Array& params, bool fHelp);
@@ -234,10 +236,10 @@ extern json_spirit::Value smsginbox(const json_spirit::Array& params, bool fHelp
 extern json_spirit::Value smsgoutbox(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value smsgbuckets(const json_spirit::Array& params, bool fHelp);
 
+
 extern json_spirit::Value thinscanmerkleblocks(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value thinforcestate(const json_spirit::Array& params, bool fHelp);
 
 extern json_spirit::Value extkey(const json_spirit::Array& params, bool fHelp);
-extern json_spirit::Value mnemonic(const json_spirit::Array& params, bool fHelp);
 
 #endif

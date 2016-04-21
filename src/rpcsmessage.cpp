@@ -86,7 +86,7 @@ Value smsgoptions(const Array& params, bool fHelp)
             std::string value   = params[1].get_str();
             fDescriptions       = IsStringBoolPositive(value);
         };
-        
+         
         result.push_back(Pair("option", std::string("newAddressRecv = ") + (smsgOptions.fNewAddressRecv ? "true" : "false")));
         if (fDescriptions)
             result.push_back(Pair("newAddressRecv", "Enable receiving messages for newly created addresses."));
@@ -95,8 +95,8 @@ Value smsgoptions(const Array& params, bool fHelp)
             result.push_back(Pair("newAddressAnon", "Enable receiving anonymous messages for newly created addresses."));
         result.push_back(Pair("option", std::string("scanIncoming = ") + (smsgOptions.fScanIncoming ? "true" : "false")));
         if (fDescriptions)
-            result.push_back(Pair("scanIncoming", "Scan incoming blocks for public keys."));
-        
+            result.push_back(Pair("scanIncoming", "Scan incoming blocks for public keys.")); 
+
         result.push_back(Pair("result", "Success."));
     } else
     if (mode == "set")
@@ -680,8 +680,8 @@ Value smsginbox(const Array& params, bool fHelp)
             delete it;
             dbInbox.TxnCommit();
             
-            result.push_back(Pair("result", strprintf("%u messages shown.", nMessages)));
-            
+            result.push_back(Pair("result", strprintf("%u messages shown.", nMessages))); 
+
         } else
         {
             result.push_back(Pair("result", "Unknown Mode."));

@@ -740,3 +740,4 @@ bool IsStealthAddress(const std::string& encodedAddress)
     
     return true;
 };
+

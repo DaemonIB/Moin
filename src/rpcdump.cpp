@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "util.h"
+#include "hash.h"
 #include "init.h" // for pwalletMain
 #include "rpcserver.h"
 #include "ui_interface.h"
@@ -113,9 +115,9 @@ public:
 
 Value importprivkey(const Array& params, bool fHelp)
 {
-    if (fHelp || params.size() < 1 || params.size() > 4)
+    if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "importprivkey <shadowcoinprivkey> [label] [rescan=true] [timestamp=1]\n"
+            "importprivkey <moinprivkey> [label]\n"
             "Adds a private key (as returned by dumpprivkey) to your wallet.");
 
     string strSecret = params[0].get_str();
@@ -127,10 +129,6 @@ Value importprivkey(const Array& params, bool fHelp)
     bool fRescan = true;
     if (params.size() > 2)
         fRescan = params[2].get_bool();
-
-    int64_t nCreateTime = 1;
-    if (params.size() > 3)
-        nCreateTime = params[3].get_int64();
 
     CBitcoinSecret vchSecret;
     bool fGood = vchSecret.SetString(strSecret);
@@ -152,13 +150,13 @@ Value importprivkey(const Array& params, bool fHelp)
         if (pwalletMain->HaveKey(vchAddress))
             return Value::null;
 
-        pwalletMain->mapKeyMetadata[vchAddress].nCreateTime = nCreateTime;
+        pwalletMain->mapKeyMetadata[vchAddress].nCreateTime = 1;
 
         if (!pwalletMain->AddKeyPubKey(key, pubkey))
             throw JSONRPCError(RPC_WALLET_ERROR, "Error adding key to wallet");
 
         // whenever a key is imported, we need to scan the whole chain
-        pwalletMain->nTimeFirstKey = nCreateTime; // 0 would be considered 'no value'
+        pwalletMain->nTimeFirstKey = 1; // 0 would be considered 'no value'
 
         if (fRescan) {
             pwalletMain->ScanForWalletTransactions(pindexGenesisBlock, true);
@@ -257,8 +255,8 @@ Value dumpprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "dumpprivkey <shadowcoinaddress/public_key_hex>\n"
-            "Reveals the private key corresponding to <shadowcoinaddress>.");
+            "dumpprivkey <moinaddress/public_key_hex>\n"
+            "Reveals the private key corresponding to <moinaddress>.");
 
     EnsureWalletIsUnlocked();
 
@@ -322,7 +320,7 @@ Value dumpwallet(const Array& params, bool fHelp)
     std::sort(vKeyBirth.begin(), vKeyBirth.end());
 
     // produce output
-    file << strprintf("# Wallet dump created by ShadowCoin %s (%s)\n", CLIENT_BUILD, CLIENT_DATE);
+    file << strprintf("# Wallet dump created by Moin %s (%s)\n", CLIENT_BUILD, CLIENT_DATE);
     file << strprintf("# * Created on %s\n", EncodeDumpTime(GetTime()));
     file << strprintf("# * Best block at time of backup was %i (%s),\n", nBestHeight, hashBestChain.ToString());
     file << strprintf("#   mined on %s\n", EncodeDumpTime(pindexBest->nTime));

@@ -165,3 +165,4 @@ BOOST_AUTO_TEST_CASE(rpc_boostasiotocnetaddr)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+

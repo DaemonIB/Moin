@@ -6,7 +6,6 @@
 #define COIN_STATE_H
 
 #include <string>
-#include <limits>
 #include "sync.h"
 
 enum eNodeType
@@ -40,26 +39,30 @@ enum eBlockFlags
 
 enum
 {
-    NODE_NETWORK = (1 << 0),
-    THIN_SUPPORT = (1 << 1),
-    THIN_STAKE   = (1 << 2),  // deprecated
-    THIN_STEALTH = (1 << 3),
-    SMSG_RELAY   = (1 << 4),
+    NODE_NETWORK        = (1 << 0),
+    THIN_SUPPORT        = (1 << 1),
+    THIN_STAKE          = (1 << 2),  // deprecated
+    THIN_STEALTH        = (1 << 3),
+    SMSG_RELAY          = (1 << 4),
 };
 
-const int64_t GENESIS_BLOCK_TIME = 1405769613;
+const int64_t GENESIS_BLOCK_TIME = 1443543696;
 
 static const int64_t COIN = 100000000;
 static const int64_t CENT = 1000000;
 
-/** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
 static const int64_t MIN_TX_FEE = 10000;
 static const int64_t MIN_TX_FEE_ANON = 1000000;
-/** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
-static const int64_t COIN_YEAR_REWARD = 2 * CENT; // 2% per year
+static const int64_t MAX_MONEY = 21000000 * COIN;
+static const int64_t COIN_YEAR_REWARD = 50 * CENT; // 50% first year
+static const int64_t MCOIN_YEAR_REWARD = 25 * CENT; // 25% second year
+static const int64_t OCOIN_YEAR_REWARD = 10 * CENT; // 10% third year
+static const int64_t ICOIN_YEAR_REWARD = 5 * CENT; //  5% fourth year 
+static const int64_t NCOIN_YEAR_REWARD = 2 * CENT; //  2% fifth year
 
 static const int64_t MBLK_RECEIVE_TIMEOUT = 60; // seconds
+
 
 extern int nNodeMode;
 extern int nNodeState;
@@ -117,8 +120,6 @@ extern unsigned int nBlockMinSize;
 extern int64_t nMinTxFee;
 
 extern unsigned int nStakeSplitAge;
-extern int nStakeMinConfirmations;
-extern int64_t nStakeSplitThreshold;
 extern int64_t nStakeCombineThreshold;
 
 extern uint32_t nExtKeyLookAhead;

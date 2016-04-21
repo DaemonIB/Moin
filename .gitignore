@@ -1,7 +1,7 @@
 src/*.exe
-src/shadowcoin
-src/shadowcoind
-src/test_shadow
+src/Moin
+src/moind
+src/test_moin
 src/build.h
 .*.swp
 *.*~*
@@ -13,11 +13,12 @@ src/build.h
 *.patch
 *.dat
 *.autosave
-.shadowcoin
+.moin
 #compilation and Qt preprocessor part
 *.qm
 Makefile
-shadow
+MOIN
+moin
 #resources cpp
 qrc_*.cpp
 #qt creator

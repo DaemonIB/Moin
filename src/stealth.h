@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef SHADOW_STEALTH_H
-#define SHADOW_STEALTH_H
+#ifndef MOIN_STEALTH_H
+#define MOIN_STEALTH_H
 
 #include <stdlib.h> 
 #include <stdio.h> 
@@ -63,7 +63,7 @@ public:
     {
         return memcmp(&scan_pubkey[0], &y.scan_pubkey[0], EC_COMPRESSED_SIZE) == 0;
     };
-    
+
     IMPLEMENT_SERIALIZE
     (
         READWRITE(this->options);
@@ -90,5 +90,5 @@ int StealthSharedToPublicKey(const ec_point& pkSpend, const ec_secret &sharedS, 
 bool IsStealthAddress(const std::string& encodedAddress);
 
 
-#endif  // SHADOW_STEALTH_H
+#endif  // MOIN_STEALTH_H
 

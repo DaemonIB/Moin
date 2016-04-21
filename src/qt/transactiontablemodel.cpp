@@ -354,8 +354,8 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, b
     case TransactionRecord::Generated:
         return lookupAddress(wtx->address, tooltip);
     case TransactionRecord::SendToOther:
-    case TransactionRecord::RecvShadow:
-    case TransactionRecord::SendShadow:
+    case TransactionRecord::RecvMoinX:
+    case TransactionRecord::SendMoinX:
         return QString::fromStdString(wtx->address);
     case TransactionRecord::SendToSelf:
     default:
@@ -377,8 +377,8 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
-    case TransactionRecord::RecvShadow:
-    case TransactionRecord::SendShadow:
+    case TransactionRecord::RecvMoinX:
+    case TransactionRecord::SendMoinX:
         {
         QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(wtx->address));
         if(label.isEmpty())
@@ -423,7 +423,7 @@ QString TransactionTableModel::txStatusDecoration(const TransactionRecord *wtx) 
 
         switch(status_switch)
         {
-            case 1: return "fa-clock-o red";
+            case 1: return "fa-clock-o mined-red";
             case 2: return "fa-clock-o lightred";
             case 3: return "fa-clock-o orange";
             case 4: return "fa-clock-o yellow";

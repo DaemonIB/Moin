@@ -57,8 +57,7 @@ public:
 
     // Initialize a public key using begin/end iterators to byte data.
     template<typename T>
-    void Set(const T pbegin, const T pend)
-    {
+    void Set(const T pbegin, const T pend) {
         int len = pend == pbegin ? 0 : GetLen(pbegin[0]);
         if (len && len == (pend-pbegin))
             memcpy(vch, (unsigned char*)&pbegin[0], len);
@@ -68,7 +67,8 @@ public:
 
     // Construct a public key using begin/end iterators to byte data.
     template<typename T>
-    CPubKey(const T pbegin, const T pend) {
+    CPubKey(const T pbegin, const T pend)
+    {
         Set(pbegin, pend);
     }
 
@@ -173,7 +173,7 @@ public:
 
     // Derive BIP32 child pubkey.
     bool Derive(CPubKey& pubkeyChild, unsigned char ccChild[32], unsigned int nChild, const unsigned char cc[32]) const;
-    
+
 };
 
 
@@ -247,7 +247,7 @@ public:
     };
     
     
-    void Set(const unsigned char *p, bool fCompressedIn)
+    void Set(const unsigned char *p, bool fCompressedIn) 
     {
         if (Check(p)) {
             memcpy(vch, p, 32);
@@ -297,19 +297,23 @@ public:
 
     // Derive BIP32 child key.
     bool Derive(CKey& keyChild, unsigned char ccChild[32], unsigned int nChild, const unsigned char cc[32]) const;
-    
+
     /**
      * Verify thoroughly whether a private key and a public key match.
      * This is done using a different mechanism than just regenerating it.
      */
     bool VerifyPubKey(const CPubKey& vchPubKey) const;
-    
+
     // Load private key and check that public key matches.
     bool Load(CPrivKey &privkey, CPubKey &vchPubKey, bool fSkipCheck);
 
     // Check whether an element of a signature (r or s) is valid.
     static bool CheckSignatureElement(const unsigned char *vch, int len, bool half);
 
+    // Ensure that signature is DER-encoded
+    static bool ReserealizeSignature(std::vector<unsigned char>& vchSig);
+    
+    
     unsigned int GetSerializeSize(int nType, int nVersion) const
     {
         return 33;
@@ -389,7 +393,7 @@ struct CExtKey {
         return a.nDepth == b.nDepth && memcmp(&a.vchFingerprint[0], &b.vchFingerprint[0], 4) == 0 && a.nChild == b.nChild &&
                memcmp(&a.vchChainCode[0], &b.vchChainCode[0], 32) == 0 && a.key == b.key;
     }
-    
+
     bool IsValid() const { return key.IsValid(); }
 
     void Encode(unsigned char code[74]) const;
@@ -501,7 +505,7 @@ public:
     CExtPubKey GetExtPubKey() const;
     CExtKeyPair Neutered() const;
     void SetMaster(const unsigned char *seed, unsigned int nSeedLen);
-    int SetKeyCode(const unsigned char *pkey, const unsigned char *pcode);
+        int SetKeyCode(const unsigned char *pkey, const unsigned char *pcode);
     
     unsigned int GetSerializeSize(int nType, int nVersion) const
     {

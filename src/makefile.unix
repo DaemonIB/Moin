@@ -12,6 +12,8 @@ DEFS=-DBOOST_SPIRIT_THREADSAFE
 DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH))
 LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH))
 
+# [rm]
+DEFS += -DDEBUG_LOCKORDER
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
@@ -119,7 +121,8 @@ OBJS= \
     obj/extkey.o \
     obj/db.o \
     obj/init.o \
-    obj/shadowcoind.o \
+    obj/moind.o \
+    obj/irc.o \
     obj/keystore.o \
     obj/miner.o \
     obj/main.o \
@@ -136,7 +139,6 @@ OBJS= \
     obj/rpcrawtransaction.o \
     obj/rpcsmessage.o \
     obj/rpcextkey.o \
-    obj/rpcmnemonic.o \
     obj/script.o \
     obj/sync.o \
     obj/util.o \
@@ -160,10 +162,10 @@ OBJS= \
     obj/bloom.o 
 
 
-all: shadowcoind
+all: moind
 
-test check: test_shadow FORCE
-	./test_shadow
+test check: test_moin FORCE
+	./test_moin
 
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
@@ -198,12 +200,12 @@ obj/%.o: %.cpp
 		-e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	rm -f $(@:%.o=%.d)
 
-shadowcoind: $(OBJS:obj/%=obj/%)
+moind: $(OBJS:obj/%=obj/%)
 	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
-
+    
 xTESTCXXFLAGS = -std=c++11
 
 obj-test/%.o: test/%.cpp
@@ -213,15 +215,15 @@ obj-test/%.o: test/%.cpp
 		-e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	rm -f $(@:%.o=%.d)
 
-test_shadow: $(TESTOBJS) $(filter-out obj/init.o obj/shadowcoind.o,$(OBJS:obj/%=obj/%))
+test_moin: $(TESTOBJS) $(filter-out obj/init.o obj/moind.o,$(OBJS:obj/%=obj/%))
 	$(LINK) $(xCXXFLAGS) -o $@ $(LIBPATHS) $^ $(TESTLIBS) $(xLDFLAGS) $(LIBS)
 
 clean:
-	-rm -f shadowcoind
+	-rm -f moind
 	-rm -f obj/*.o
 	-rm -f obj/*.P
 	-rm -f obj/build.h
-	-rm -f test_shadow
+	-rm -f test_moin
 	-rm -f obj-test/*.o
 	-rm -f obj-test/*.P
 	-cd leveldb && $(MAKE) clean || true
