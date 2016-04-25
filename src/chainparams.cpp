@@ -265,7 +265,7 @@ public:
         pchMessageStart[3] = 0x2f;
         
         nFirstPosBlock = 111; 
-        nFirstPosv2Block = 301;
+        nFirstPosv2Block = 300;
         
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 16);
         bnProofOfStakeLimit = CBigNum(~uint256(0) >> 20);
