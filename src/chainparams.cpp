@@ -264,6 +264,8 @@ public:
         pchMessageStart[2] = 0x70;
         pchMessageStart[3] = 0x2f;
         
+        nLastPOWBlock = 300;
+
         nFirstPosBlock = 111; 
         nFirstPosv2Block = 300;
         
