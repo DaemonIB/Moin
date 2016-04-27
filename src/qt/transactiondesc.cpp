@@ -35,7 +35,7 @@ QString TransactionDesc::FormatTxStatus(const CWalletTx& wtx)
 QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx)
 {
     QString strHTML;
-    QString explorer("http://explorer.discovermoin.com/");
+    QString explorer(fTestNet ? "http://testnet.discovermoin.com/" : "http://explorer.discovermoin.com/");
 
     LOCK2(cs_main, wallet->cs_wallet);
     strHTML.reserve(4000);
