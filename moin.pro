@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET =  moin 
-VERSION = 1.0.0.1
+VERSION = 1.1.0.0
 INCLUDEPATH += src src/json src/qt
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
@@ -56,7 +56,7 @@ build_macosx64 {
 
     QMAKE_CXXFLAGS += -arch x86_64
     QMAKE_CFLAGS += -arch x86_64
-    QMAKE_LFLAGS += -arch x86_64 
+    QMAKE_LFLAGS += -arch x86_64
 }
 build_win32 {
     BOOST_LIB_SUFFIX=-mgw48-mt-s-1_55
@@ -87,17 +87,18 @@ contains(RELEASE, 1) {
     }
 }
 
+!win32 {
 # for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
 QMAKE_CXXFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 # We need to exclude this for Windows cross compile with MinGW 4.2.x, as it will result in a non-working executable!
 # This can be enabled for Windows, when we switch to MinGW >= 4.4.x.
-
+}
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
-win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
-win32:QMAKE_LFLAGS *= -static-libgcc -static-libstdc++
+win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat -static
+#win32:QMAKE_LFLAGS *= -static-libgcc -static-libstdc++
 
-# use: qmake "USE_UPNP=1" ( enabled by default; default)
+# use: qmake "USE_UPNP=1" ( enabled by default; default) 
 #  or: qmake "USE_UPNP=0" (disabled by default)
 #  or: qmake "USE_UPNP=-" (not supported)
 # miniupnpc (http://miniupnp.free.fr/files/) must be installed for support
@@ -132,7 +133,7 @@ contains(MOIN_NEED_QT_PLUGINS, 1) {
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp \
-  src/qt/addresstablemodel.cpp
+    src/qt/addresstablemodel.cpp
 
 win32 {
     # make an educated guess about what the ranlib command is called
@@ -216,6 +217,7 @@ HEADERS += \
     src/miner.h \
     src/net.h \
     src/key.h \
+    src/extkey.h \
     src/eckey.h \
     src/db.h \
     src/txdb.h \
@@ -245,7 +247,6 @@ HEADERS += \
     src/qt/addresstablemodel.h \
     src/qt/coincontroldialog.h \
     src/qt/coincontroltreewidget.h \
-    src/qt/signverifymessagedialog.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
     src/qt/bitcoinaddressvalidator.h \
@@ -271,8 +272,7 @@ HEADERS += \
     src/qt/trafficgraphwidget.h \
     src/qt/messagemodel.h \
     src/qt/moingui.h \
-    src/qt/moinbridge.h \
-    src/qt/addressbookpage.h    
+    src/qt/moinbridge.h
 
 SOURCES += \
     src/alert.cpp \
@@ -284,6 +284,7 @@ SOURCES += \
     src/hash.cpp \
     src/netbase.cpp \
     src/key.cpp \
+    src/extkey.cpp \
     src/eckey.cpp \
     src/script.cpp \
     src/main.cpp \
@@ -321,10 +322,11 @@ SOURCES += \
     src/rpcblockchain.cpp \
     src/rpcrawtransaction.cpp \
     src/rpcsmessage.cpp \
+    src/rpcextkey.cpp \
+    src/rpcmnemonic.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/coincontroldialog.cpp \
     src/qt/coincontroltreewidget.cpp \
-    src/qt/signverifymessagedialog.cpp \
     src/qt/aboutdialog.cpp \
     src/qt/editaddressdialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
@@ -351,19 +353,16 @@ SOURCES += \
     src/qt/messagemodel.cpp \
     src/qt/moingui.cpp \
     src/qt/moin.cpp \
-    src/qt/moinbridge.cpp \
-    src/qt/addressbookpage.cpp
+    src/qt/moinbridge.cpp
     
 
 FORMS += \
     src/qt/forms/coincontroldialog.ui \
-    src/qt/forms/signverifymessagedialog.ui \
     src/qt/forms/aboutdialog.ui \
     src/qt/forms/editaddressdialog.ui \
     src/qt/forms/transactiondescdialog.ui \
     src/qt/forms/askpassphrasedialog.ui \
-    src/qt/forms/rpcconsole.ui \
-    src/qt/forms/addressbookpage.ui
+    src/qt/forms/rpcconsole.ui
 
 
 CODECFORTR = UTF-8

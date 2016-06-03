@@ -17,7 +17,7 @@ packages:
 - "bsdmainutils"
 reference_datetime: "2013-06-01 00:00:00"
 remotes:
-- "url": "https://github.com/KingCaper/moin.git"
+- "url": "https://github.com/MOIN/moin.git"
   "dir": "moin"
 files:
 - "qt-win32-5.5.0-gitian.tar.xz"
@@ -88,19 +88,6 @@ script: |
     $STAGING/host/bin/qmake -xplatform win32-g++ RELEASE=1 QMAKE_LRELEASE="$STAGING/host/bin/lrelease" MINIUPNPC_LIB_PATH="$DEPSDIR/lib" MINIUPNPC_INCLUDE_PATH="$DEPSDIR/include" BDB_LIB_PATH="$DEPSDIR/lib" BDB_INCLUDE_PATH="$DEPSDIR/include" BOOST_LIB_PATH="$DEPSDIR/lib" BOOST_INCLUDE_PATH="$DEPSDIR/include" BOOST_LIB_SUFFIX="-mt-s" BOOST_THREAD_LIB_SUFFIX="_win32-mt-s" OPENSSL_LIB_PATH="$DEPSDIR/lib" OPENSSL_INCLUDE_PATH="$DEPSDIR/include" INCLUDEPATH="$DEPSDIR/include" DEFINES=BOOST_THREAD_USE_LIB BITCOIN_NEED_QT_PLUGINS=1 QMAKE_CXXFLAGS=-frandom-seed=bitcoin USE_BUILD_INFO=1
     make $MAKEOPTS
     cp release/moin.exe $BINDIR/
-    #
-    # windeployqt !?
-    #
-    cp $STAGING/host/bin/*.dll $BINDIR/
-    if [ "$BITS" == "32" ]; then
-      cp /usr/lib/gcc/i686-w64-mingw32/4.8/*.dll $BINDIR/
-      cp /usr/i686-w64-mingw32/lib/*.dll $BINDIR/
-    else
-      cp /usr/lib/gcc/x86_64-w64-mingw32/4.8/*.dll $BINDIR/
-      cp /usr/x86_64-w64-mingw32/lib/*.dll $BINDIR/
-    fi
-    mkdir -p $BINDIR/platforms
-    cp $STAGING/plugins/platforms/*.dll $BINDIR/platforms/
     #
     unset LD_PRELOAD
     unset FAKETIME

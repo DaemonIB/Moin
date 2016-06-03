@@ -131,6 +131,7 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "getblocktemplate", 0 },
     { "listsinceblock", 1 },
 
+    { "clearwallettransactions", 0},
     { "scanforalltxns", 0 },
     { "scanforstealthtxns", 0 },
 
@@ -146,6 +147,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "reservebalance", 1 },
     { "addmultisigaddress", 0 },
     { "addmultisigaddress", 1 },
+    { "createmultisig", 0 },
+    { "createmultisig", 1 },
     { "listunspent", 0 },
     { "listunspent", 1 },
     { "listunspent", 2 },
@@ -155,9 +158,9 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "signrawtransaction", 1},
     { "signrawtransaction", 2},
     { "keypoolrefill", 0 },
-    
+
     { "sendtostealthaddress", 1 },
-    
+
     { "sendmointoanon", 1 },
     { "sendanontoanon", 1 },
     { "sendanontoanon", 2 },
@@ -165,9 +168,12 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "sendanontomoin", 2 },
     { "estimateanonfee", 0 },
     { "estimateanonfee", 1 },
-    
+
     { "thinscanmerkleblocks", 0 },
     { "thinforcestate", 0 },
+
+    { "importprivkey", 2 },
+    { "importprivkey", 3 },
 };
 
 class CRPCConvertTable
