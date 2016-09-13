@@ -39,7 +39,7 @@ QString BitcoinUnits::name(int unit)
     case MOIN: return QString("MOIN");
     case mMOIN: return QString("mMOIN");
     case uMOIN: return QString::fromUtf8("μMOIN");
-    case sMOIN: return QString::fromUtf8("Moinoshi");
+    case sMOIN: return QString::fromUtf8("Moinlet");
     default: return QString("???");
     }
 }
@@ -51,7 +51,7 @@ QString BitcoinUnits::description(int unit)
     case MOIN:  return QString("Moins");
     case mMOIN: return QString("Milli-Moins (1 / 1,000)");
     case uMOIN: return QString("Micro-Moins (1 / 1,000,000)");
-    case sMOIN: return QString("Moinoshi (1 / 100,000,000)");
+    case sMOIN: return QString("Moinlet (1 / 100,000,000)");
     default:   return QString("???");
     }
 }

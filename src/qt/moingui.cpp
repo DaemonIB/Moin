@@ -553,8 +553,8 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
         tooltip += tr("Last received %1 was generated %2.").arg(sBlockType).arg(text);
     };
 
-    blocksIcon     .setAttribute("data-title", tooltip);
-    syncingIcon    .setAttribute("data-title", tooltip);
+    blocksIcon.setAttribute("data-title", tooltip);
+    syncingIcon.setAttribute("data-title", tooltip);
     syncProgressBar.setAttribute("data-title", tooltip);
     syncProgressBar.setAttribute("value", QString::number(count));
     syncProgressBar.setAttribute("max",   QString::number(nTotalBlocks));

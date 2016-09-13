@@ -201,7 +201,7 @@ function tooltip (event) {
         if($(window).width() < tooltip.outerWidth() * 1.5)
             tooltip.css('max-width', $(window).width() / 2);
         else
-            tooltip.css('max-width', 340);
+            tooltip.css('max-width', 300);
 
         var pos_left = target.offset().left + (target.outerWidth() / 2) - (tooltip.outerWidth() / 2),
             pos_top  = target.offset().top - tooltip.outerHeight() - 20;
@@ -226,6 +226,21 @@ function tooltip (event) {
         {
             pos_left = event.pageX;
             tooltip.removeClass('left right');
+        }
+
+        // For tooltips in transactions/recent transactions lists adjust position to stay in window
+        if(target.parent().attr('class') === 'iw-mTrigger'||target.parent().attr('id') === 'recenttxns')
+        {
+            if(event.pageX + (tooltip.outerWidth() / 2) + 300 > target.offset().left + target.outerWidth() && tooltip.outerWidth() > 500)
+            {
+                pos_left = $(window).width() - tooltip.outerWidth() - 100;
+                tooltip.removeClass('left right');
+            }
+            else if(event.pageX + (tooltip.outerWidth() / 2) + 150 > target.offset().left + target.outerWidth())
+            {
+                pos_left = $(window).width() - tooltip.outerWidth();
+                tooltip.removeClass('left right');
+            }
         }
 
         if(pos_top < 0)
@@ -396,7 +411,7 @@ var unit = {
 
             case 3:
                 this.name    = "sMOIN",
-                this.display = "Moinoshi";
+                this.display = "Moinlet";
                 break;
 
             default:
@@ -553,61 +568,9 @@ var overviewPage = {
         this.immature = $("#immature"),
         this.total = $("#total");
 
-        // Announcement feed
-        $.ajax({
-            url:"http://ajax.googleapis.com/ajax/services/feed/load?v=2.0&q=http://blog.discovermoin.com/rss/atom",
-            dataType: 'jsonp'
-        }).success(function(rss) {
-            rss.responseData.feed.entries = rss.responseData.feed.entries.sort(function(a,b){
-                return new Date(b.publishedDate) - new Date(a.publishedDate);
-            });
-            for(i=0;i<rss.responseData.feed.entries.length;i++) {
-                $('#announcements').append("<h4><a href='" + rss.responseData.feed.entries[i].link  + "'>" + rss.responseData.feed.entries[i].title + "</a></h4>"
-                                         + "<span>"
-                                             +      new Date(rss.responseData.feed.entries[i].publishedDate).toDateString()
-                                         + "</span>");
-            }
-        });
 
-        var menu = [{
-                name: 'Backup&nbsp;Wallet...',
-                fa: 'fa-save red fa-fw',
-                fun: function () {
-                   bridge.userAction(['backupWallet']);
-                }
-                }, /*
-                {
-                    name: 'Export...',
-                    img: 'qrc:///icons/editcopy',
-                    fun: function () {
-                        copy('#addressbook .footable .selected .label');
-                    }
-                }, */
-                {
-                    name: 'Sign&nbsp;Message...',
-                    fa: 'fa-pencil-square-o red fa-fw',
-                    fun: function () {
-
-                       $('#sign-message-button').click();
-                    }
-                },
-                {
-                    name: 'Verify&nbsp;Message...',
-                    fa: 'fa-check red fa-fw',
-                    fun: function () {
-                        $('#verify-message-button').click();
-                    }
-                },
-                {
-                    name: 'Exit',
-                    fa: 'fa-times red fa-fw',
-                    fun: function () {
-                       bridge.userAction(['close']);
-                    }
-                }];
-
-        $('#file').contextMenu(menu, {onOpen:function(data,e){openContextMenu(data.menu);}, onClose:function(data,e){data.menu.isOpen = 0;}, triggerOn: 'click', displayAround: 'trigger', position: 'bottom', mouseClick: 'left', sizeStyle: 'content'});
-
+        // Settings menu
+        
         menu = [{
                      id: 'encryptWallet',
                      name: 'Encrypt&nbsp;Wallet...',
@@ -647,24 +610,24 @@ var overviewPage = {
                  		}
                     },
                 {
-					name: 'Backup&nbsp;Wallet...',
-					fa: 'fa-save red fa-fw',
-					fun: function () {
-                   bridge.userAction(['backupWallet']);
+		    name: 'Backup&nbsp;Wallet...',
+		    fa: 'fa-save red fa-fw',
+	       	    fun: function () {
+                        bridge.userAction(['backupWallet']);
 				}
                     },
                 {
                     name: 'Sign&nbsp;Message...',
                     fa: 'fa-pencil-square-o red fa-fw',
                     fun: function () {
-                       bridge.userAction({'signMessage': $('#receive .footable .selected .address').text()});
+                       $('#sign-message-button').click();
                     }
                 },
                 {
                     name: 'Verify&nbsp;Message...',
                     fa: 'fa-check red fa-fw',
                     fun: function () {
-                       bridge.userAction({'verifyMessage': $('#addressbook .footable .selected .address').text()});
+                        $('#verify-message-button').click();
                     }
                 },
                 {				
@@ -672,11 +635,12 @@ var overviewPage = {
                      fa: 'fa-bug red fa-fw',
                      fun: function () {
                         bridge.userAction(['debugClicked']);
-					}
+		    }
                 },
                 {
                      name: ' About&nbsp;Moin',
-                     fa: 'fa-caret-up red fa-fw',
+                     img: 'qrc:///icons/moin',
+                     _class: 'test-class',
                      fun: function () {
                         bridge.userAction(['aboutClicked']);
                      }
@@ -690,37 +654,6 @@ var overviewPage = {
                  }];
 
         $('#settings').contextMenu(menu, {onOpen:function(data,e){openContextMenu(data.menu);}, onClose:function(data,e){data.menu.isOpen = 0;}, triggerOn: 'click', displayAround: 'trigger', position: 'bottom', mouseClick: 'left', sizeStyle: 'content'});
-
-        menu = [{
-                     name: 'Debug&nbsp;Window...',
-                     fa: 'fa-bug red fa-fw',
-                     fun: function () {
-                        bridge.userAction(['debugClicked']);
-                     }
-                 },
-                 {
-                     name: 'Developer&nbsp;Tools...',
-                     fa: 'fa-edit red fa-fw',
-                     fun: function () {
-                        bridge.userAction(['developerConsole']);
-                     }
-                 },
-                 {
-                     name: ' About&nbsp;Moin...',
-                     img: 'qrc:///icons/moin',
-                     fun: function () {
-                        bridge.userAction(['aboutClicked']);
-                     }
-                 },
-                 {
-                     name: 'About&nbsp;Qt...',
-                     fa: 'fa-question red fa-fw',
-                     fun: function () {
-                        bridge.userAction(['aboutQtClicked']);
-                     }
-                 }];
-
-        $('#help').contextMenu(menu, {onOpen:function(data,e){openContextMenu(data.menu);}, onClose:function(data,e){data.menu.isOpen = 0;}, triggerOn: 'click', displayAround: 'trigger', position: 'bottom', mouseClick: 'left', sizeStyle: 'content'});
     },
 
     updateBalance: function(balance, moinXBal, stake, unconfirmed, immature) {
@@ -794,7 +727,7 @@ var overviewPage = {
 
             return "<a id='"+tx.id.substring(0,17)+"' data-title='"+tx.tt+"' class='transaction-overview' href='#' onclick='$(\"#navitems [href=#transactions]\").click();$(\"#"+tx.id+"\").click();'>\
                                                 <span class='"+(tx.t == 'input' ? 'received' : (tx.t == 'output' ? 'sent' : (tx.t == 'inout' ? 'self' : 'stake')))+" icon no-padding blue-moin'>\
-                                                  <i class='fa fa-"+(tx.t == 'input' ? 'angle-left' : (tx.t == 'output' ? 'angle-right' : (tx.t == 'inout' ? 'angle-down' : 'caret-up')))+" font-26px margin-right-10'></i>"
+                                                 "+(tx.t == 'mined' ? "<img src=\"qrc:///icons/moin\" align=\"absmiddle\" class=\"iw-mIcon\" style=\"width:14px; height:14px; padding-right:8px; margin-top: 0px; margin-bottom:8px; margin-left:-3px\"/>" : "<i class=\"fa fa-"+(tx.t == 'input' ? 'angle-left' : (tx.t == 'output' ? 'angle-right' : 'angle-down'))+" font-26px margin-right-10\"></i>")
                                                 +unit.format(tx.am)+" </span> <span> "+unit.display+" </span> <span class='overview_date' data-value='"+tx.d+"'>"+tx.d_s+"</span></a>";
 
         }
@@ -1018,7 +951,7 @@ function addRecipient() {
                     <option value="0" title="Moin"                    ' + (unit.type == 0 ? "selected" : "") + '>MOIN</option> \
                     <option value="1" title="Milli-Moin (1 / 1000)"   ' + (unit.type == 1 ? "selected" : "") + '>mMOIN</option> \
                     <option value="2" title="Micro-Moin (1 / 1000000)"' + (unit.type == 2 ? "selected" : "") + '>&micro;MOIN</option> \
-                    <option value="3" title="Moinoshi (1 / 100000000)" ' + (unit.type == 3 ? "selected" : "") + '>Moinoshi</option> \
+                    <option value="3" title="Moinlet (1 / 100000000)" ' + (unit.type == 3 ? "selected" : "") + '>Moinlet</option> \
                 </select> \
             </div> \
         </div>').replace(/\[count\]/g, recipients++));
@@ -1365,9 +1298,7 @@ function addSendAddress()
         $("#new-send-address-error").text("Error: " + errorMsg);
         $("#new-send-address").addClass('inputError');
     } else
-    {
         $("#add-address-modal .modal_close").click();
-    };
 }
 
 function addressBookInit() {
@@ -1436,9 +1367,8 @@ function addressBookInit() {
         var addressbookTable =  $('#addressbook-table');
 
         if($('#filter-addressbook').val() == "")
-        {
             addressbookTable.data('footable-filter').clearFilter();
-        }
+
         $('#addressbook-filter').val($('#filter-addressbook').val() + " " + $('#filter-addressbooktype').val() ) ;
         addressbookTable.trigger('footable_filter', {filter: $('#addressbook-filter').val()});
     });
@@ -1446,9 +1376,8 @@ function addressBookInit() {
     $('#filter-addressbooktype').change(function () {
         var addressbookTable =  $('#addressbook-table');
         if($('#filter-addresstype').val() == "")
-        {
             addressbookTable.data('footable-filter').clearFilter();
-        }
+
         $('#addressbook-filter').val($('#filter-addressbook').val() + " " + $('#filter-addressbooktype').val() ) ;
         addressbookTable.trigger('footable_filter', {filter: $('#addressbook-filter').val()});
     });
@@ -1469,11 +1398,11 @@ function appendAddresses(addresses) {
 
     for(var i=0; i< addresses.length;i++)
     {
-        var address = addresses[i];
-        var addrRow = $("#"+address.address);
-        var page = (address.type == "S" ? "#addressbook" : "#receive");
+        var address = addresses[i],
+            addrRow = $("#"+address.address),
+            page = (address.type == "S" ? "#addressbook" : (address.label.lastIndexOf("group_", 0) !== 0 ? "#receive" : "#addressbook"));
 
-        if(address.type == "R" && address.address.length < 75) {
+        if(address.type == "R" && address.address.length < 75 && address.label.lastIndexOf("group_", 0) !== 0) {
             if(addrRow.length==0)
                 $("#message-from-address").append("<option title='"+address.address+"' value='"+address.address+"'>"+address.label+"</option>");
             else
@@ -1487,8 +1416,7 @@ function appendAddresses(addresses) {
             }
         }
 
-        if (addrRow.length==0)
-        {
+        if (addrRow.length==0) {
             $( page + " .footable tbody").append(
                 "<tr id='"+address.address+"' lbl='"+address.label+"'>\
                <td class='label editable' data-value='"+address.label_value+"'>"+address.label+"</td>\
@@ -1503,17 +1431,13 @@ function appendAddresses(addresses) {
                 event.stopPropagation();
                 updateValue($(this));
             }).attr("data-title", "Double click to edit").on('mouseenter', tooltip);
-        }
-        else
-        {
+        } else {
             $("#"+address.address+" .label") .data("value", address.label_value).text(address.label);
             $("#"+address.address+" .pubkey").text(address.pubkey);
         }
-
     }
 
-    var table = $('#addressbook .footable,#receive .footable').trigger("footable_setup_paging");
-
+    $('#addressbook .footable,#receive .footable').trigger("footable_setup_paging");
 }
 
 function prepAddressLookup(lReceiveAddresses)
@@ -1913,7 +1837,7 @@ function appendMessages(messages, reset) {
 
     messages = JSON.parse(messages.replace(/,\]$/, "]"));
 
-    // Massage data
+    // Message data
     for(var i=0; i<messages.length; i++)
     {
         var message = messages[i];
@@ -1923,6 +1847,7 @@ function appendMessages(messages, reset) {
                       message.received_date,
                       message.label_value,
                       message.label,
+                      message.labelTo,
                       message.to_address,
                       message.from_address,
                       message.read,
@@ -1938,16 +1863,51 @@ function appendMessages(messages, reset) {
 
 }
 
-function appendMessage(id, type, sent_date, received_date, label_value, label, to_address, from_address, read, message, initial) {
+function appendMessage(id, type, sent_date, received_date, label_value, label, labelTo, to_address, from_address, read, message, initial) {
     if(type=="R"&&read==false) {
         $(".user-notifications").show();
         $("#message-count").text(parseInt($("#message-count").text())+1);
     }
 
-    var them = type == "S" ? to_address   : from_address;
-    var self = type == "S" ? from_address : to_address;
+    var them = type == "S" ? to_address   : from_address,
+        self = type == "S" ? from_address : to_address,
+        label_msg = type == "S" ? (labelTo == "(no label)" ? self : labelTo) : (label == "(no label)" ? them : label),
+        key = (label_value == "" ? them : label_value).replace(/\s/g, ''),
+        group = false;
 
-    var key = (label_value == "" ? them : label_value).replace(/\s/g, '');
+    //Setup instructions: make sure the receiving address is named 'group_ANYTHING'.
+    //It's best to add the sender of the message with a label so you get a nice overview!
+
+    /* This is just a cheat to test the formatting, because the if clause down below is always returning false.
+    It will put all messages under the same contact*/
+    if(type == "R" && labelTo.lastIndexOf("group_", 0) === 0) { //Received, to group
+        key = labelTo.replace('group_', '');
+        group = true;
+    } else if(label_value.lastIndexOf("group_", 0) === 0) { //sent to group, 
+        key = label_value.replace('group_', '');
+        group = true;
+    } else if(labelTo.lastIndexOf("group_", 0) === 0) { //sent by group, should not be possible but yeah anything can happen.
+        group = true;
+    }
+    //alert("Debug label=" + label_value + " labelTo=" + labelTo + " group=" + group + " key (me)=" + key);
+    /* 
+    Basically I seperated the sender of the message (label_msg) from the contact[key].
+    So we can still group by the key, but the messages in the chat have the right sender label.
+    */
+    //INVITE TO GROUP CODE
+    if(message.lastIndexOf("/invite", 0) === 0 && message.length >= 61){
+       var group_key = message.substring(8, 60).replace(/[^A-Za-z0-9\s!?]/g, ""); // regex whitelist only a-z, A-Z, 0-9
+       var group_label = message.substring(61, message.length).replace(/[^A-Za-z0-9\s!?]/g, ""); // regex whitelist only a-z, A-Z, 0-9
+
+        if(group_label.length == 0)
+            group_label = them + "_" + group_key.substring(0, 5);
+
+        if(type = "R"){ //If message contains /invite privkey label, insert HTML
+            message = 'You\'ve been invited to a group named \'' + group_label + '\'! <a id="add-new-send-address" class="button is-inverse has-icon-spacing" onclick="bridge.joinGroupChat(\'' + group_key + '\',\'group_' + group_label + '\')"><i class="fa fa-plus"></i>Join group</a>';
+        } else if(type = "S"){
+            message = "An invite for group " + group_label + " has been sent.";
+        }
+    }
 
     var contact = contacts[key];
 
@@ -1955,13 +1915,13 @@ function appendMessage(id, type, sent_date, received_date, label_value, label, t
         contacts[key] = {},
         contact = contacts[key],
         contact.key = key,
-        contact.label = label,
+        contact.label = key,
         contact.avatar = (false ? '' : 'qrc:///images/default'), // TODO: Avatars!!
         contact.messages  = new Array();
 
     if($.grep(contact.messages, function(a){ return a.id == id; }).length == 0)
     {
-        contact.messages.push({id:id, them: them, self: self, message: message, type: type, sent: sent_date, received: received_date, read: read});
+        contact.messages.push({id:id, them: them, self: self, label_msg: label_msg, group: group, message: message, type: type, sent: sent_date, received: received_date, read: read});
 
         if(!initial)
             appendContact(key, true);
@@ -1969,18 +1929,19 @@ function appendMessage(id, type, sent_date, received_date, label_value, label, t
 }
 
 function appendContact (key, newcontact) {
-    var contact_el = $("#contact-"+key);
-    var contact = contacts[key];
-
-    var unread_count = $.grep(contact.messages, function(a){return a.type=="R"&&a.read==false}).length;
+    var contact_el = $("#contact-"+key),
+        contact = contacts[key],
+        unread_count = $.grep(contact.messages, function(a){return a.type=="R"&&a.read==false}).length,
+        contact_address = (contact.messages[0].group && contact.messages[0].type != "S") ? contact.messages[0].self : contact.messages[0].them;
 
     if(contact_el.length == 0) {
+        //alert("[appendContact] key=" + key + " address=" + contact.messages[0].them + " self=" + contact.messages[0].self + " group=" + contact.messages[0].group + " type=" + contact.messages[0].type);
         contact_list.append(
             "<li id='contact-"+ key +"' class='contact' data-title='"+contact.label+"'>\
                 <img src='"+ contact.avatar +"' />\
                 <span class='contact-info'>\
                     <span class='contact-name'>"+contact.label+"</span>\
-                    <span class='contact-address'>"+contact.messages[0].them+"</span>\
+                    <span class='contact-address'>"+ contact_address + "</span>\
                 </span>\
                 <span class='contact-options'>\
                         <span class='message-notifications"+(unread_count==0?' none':'')+"'>"+unread_count+"</span>\
@@ -2002,12 +1963,12 @@ function appendContact (key, newcontact) {
             });
 
             var message;
+            var bSentMessage = false;
 
             for(var i=0;i<contact.messages.length;i++)
             {
                 message = contact.messages[i];
-                if(message.read == false && bridge.markMessageAsRead(message.id))
-                {
+                if(message.read == false && bridge.markMessageAsRead(message.id)) {
                     var message_count = $("#message-count"),
                         message_count_val = parseInt(message_count.text())-1;
 
@@ -2024,7 +1985,7 @@ function appendContact (key, newcontact) {
                     <span class='info'>\
                         <img src='"+contact.avatar+"' />\
                         <span class='user-name'>"
-                            +(message.type=='S'? (message.self == 'anon' ? 'anon' : Name) : contact.label)+"\
+                            +(message.type=='S'? (message.self == 'anon' ? 'anon' : message.label_msg) : message.label_msg)+"\
                         </span>\
                     </span>\
                     <span class='message-content'>\
@@ -2033,15 +1994,18 @@ function appendContact (key, newcontact) {
                         <span class='delete' onclick='deleteMessages(\""+contact.key+"\", \""+message.id+"\");'></span>\
                     </span></li>");
 
+                //Check if group message, if we sent a message in the past and make sure we assigned the same sender address to the chat.
+                if(message.group && message.type == 'S' && !bSentMessage) {
+                        bSentMessage = true;
+                        $("#message-from-address").val(message.self);
+                        $("#message-to-address").val(message.them);
+                }
             }
 
-
             messagesScroller.refresh();
-
             messagesScroller.scrollTo(0, messagesScroller.maxScrollY, 600);
 
             var scrollerBottom = function() {
-
                 var max = messagesScroller.maxScrollY;
 
                 messagesScroller.refresh();
@@ -2060,9 +2024,14 @@ function appendContact (key, newcontact) {
             setTimeout(scrollerBottom, 5000);
 
             //discussion.children("[title]").on("mouseenter", tooltip);
-
-            $("#message-from-address").val(message.self);
-            $("#message-to-address").val(message.them);
+            if(!bSentMessage){
+                if(!message.group){ //normal procedure
+                    $("#message-from-address").val(message.self);
+                    $("#message-to-address").val(message.them); //them
+                } else if(message.type == "R") { //if it's a group, and no messages were sent from it yet, then we have not sent a message to it.
+                    $("#message-to-address").val(message.self);
+                }
+            }
 
         }).on("mouseenter", tooltip);
 
@@ -2514,6 +2483,10 @@ var blockExplorerPage =
             }).find(".editable")
     }
 }
+
+
+// Key management 
+
 
 var keyManagementPage = {
     init: function() {

@@ -3,13 +3,13 @@
 
 static const unsigned int pnSeed[] =
 {
-    0x3413C2AC,
-    0xBCA65F0F,
+    0xA3AC9EF6,
+    0xA3AC90E9
 };
 
 static const unsigned int pnTestnetSeed[] =
 {
-    0x3413C2AC,
+    0xA3AC90E9,
 
 };
 

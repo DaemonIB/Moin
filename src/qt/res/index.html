@@ -36,7 +36,7 @@
 
     <nav id="navpanel">
         <div style="text-align:center;">
-            <a class="img-logo" = href="https://discovermoin.com" target="_blank"><img style="margin-top:45px;margin-bottom:24px;width:131px;height:105px;"src="qrc:///images/moin-vertical"></a>
+            <a class="img-logo" = href="https://discovermoin.com" target="_blank"><img style="margin-top:37px;margin-bottom:24px;width:131px;height:105px;"src="qrc:///images/moin-vertical"></a>
         </div>
 
         <ul id="navitems" class="vmenu">
@@ -44,18 +44,17 @@
             <li><a href="#send">Send</a></li>
             <li><a href="#receive">Receive</a></li>
             <li><a href="#transactions">Transactions</a></li>
-            <li><a href="#addressbook">Address book</a></li>
+            <li><a href="#addressbook">Addresses</a></li>
             <li><a href="#messages" onclick="iscrollReload(true);">Chat</a></li>
-            <li><a href="#chaindata" onclick="chainDataPage.updateAnonOutputs();">Chain Data</a></li>
-            <li><a href="#blockdata" onclick="blockExplorerPage.updateLatestBlocks();">Block Explorer</a></li>
-            <li class="none"><a href="#keymanagement" onclick="$('#key-options').show(); $('#wizards').hide(); $('#keymanagement-advanced').hide();">Key Management</a></li>
+            <li><a href="#chaindata" onclick="chainDataPage.updateAnonOutputs();">MOINX Chain</a></li>
+            <li><a href="#blockdata" onclick="blockExplorerPage.updateLatestBlocks();">Explorer</a></li>
+            <li class="none"><a href="#keymanagement" onclick="$('#key-options').show(); $('#wizards').hide(); $('#keymanagement-advanced').hide();">Keys</a></li>
             <li class="none"><a href="#options">Options</a></li>
-            <!--li><a href="#news">News</a></li   showWizardScreen('key-manage-wizard'); -->
         </ul>
-		
+
         <div id="navinfo">
-            <a id="clientinfo" href="#about">Moin <span id="version"></span></a>
-            <progress id="syncProgressBar" max=100 value=1 title="Catching up...
+            <a id="clientinfo" href="#about">MOIN <span id="version"></span></a>
+            <progress id="syncProgressBar" max=100 value=1 data-title="Catching up...
                                                                   downloaded 0 blocks of history..."></progress>
         </div>
     </nav><!-- /navpanel -->
@@ -68,10 +67,11 @@
                 <h2>Add new receive address</h2>
                 <div style="white-space:nowrap;">
                     <label for="new-address-label" class="recipient">Label: </label>
-                    <input id="new-address-label"  class="recipient input_box" style="width: 450px; height: 40px;" data-title="Enter a label for this address to add it to your address book" placeholder="Enter a label for this address to add it to your address book" onchange="$('#new-contact-pubkey').val(bridge.getPubKey($('#new-contact-address').val(), this.value));" maxlength="128"/>
+                    <input id="new-address-label"  class="recipient input_box" style="width: 450px; height: 40px;" data-title="Enter a label for this address to add it to your address book" placeholder="Enter a label for this address to add it to your address book" maxlength="128"/>
                     <select id="new-addresstype" class="recipient button is-inverse has-fixed-icon "  style="width:25%;height:40px;padding:0 15px; margin-bottom: 5px;" onchange="">
                         <option value="1" title="Normal">Normal</option>
                         <option value="2" title="Stealth">Stealth</option>
+                        <option value="4" title="Group">Group</option>
                         <option value="3" title="BIP32">BIP32</option>
                     </select>
                 </div>
@@ -106,6 +106,7 @@
                     <option value="" title="Filter Address Type" selected >Filter Address Type</option>
                     <option value="Normal" title="Normal">Normal</option>
                     <option value="Stealth" title="Stealth">Stealth</option>
+                    <option value="Group" title="Group">Group</option>
                     <option value="BIP32" title="BIP32">BIP32</option>
                 </select>
             </div>
@@ -160,7 +161,7 @@
                     <option value="0" title="Moin">MOIN</option>
                     <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
                     <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
-                    <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
+                    <option value="3" title="Moinlet (1 / 100000000)">Moinlet</option>
                 </select>
             </span>
 
@@ -171,7 +172,7 @@
         <!-- Overview Page -->
         <article id="overview">
             <div class="content top">
-                <h2 class="contracted">Balance <span class="outofsync syncing">out of sync</span></h2>
+                <h2 id="balance">Balance <span class="outofsync syncing">out of sync</span></h2>
 
                 <!--span class="incoming-transactions none">
                     <i class="fa fa-sign-in margin-right-10"></i>
@@ -185,7 +186,7 @@
                             <span>0</span>
                             <span class="light-grey">.</span>
                             <span class="cents">00</span>
-                            <span class="units">MOIN</span>
+                            <span class="units"></span>
                         </span>
                         <span id="staking-big" class="staking">
                             <span>0</span>
@@ -285,7 +286,7 @@
                         <label>Custom change address: </label>
                         <div class="flex-left">
                             <input id="change_address" data-title="Optional address to receive transaction change" placeholder="Enter a MOIN address (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" maxlength="128" oninput="base58.check(this);" />
-                            <a id="cust-add-lkp" class="button is-inverse has-fixed-icon"  style="margin-right:10px; margin-left:10px; height:43px; width:43px;" href="#address-lookup-modal" onclick="returnto='change_address'; prepAddressLookup(true);" ><i class="fa fa-book"></i></a>
+                            <a id="cust-add-lkp" class="button is-inverse2 has-fixed-icon"  style="margin-right:10px; margin-left:10px; height:43px; width:43px;" href="#address-lookup-modal" onclick="returnto='change_address'; prepAddressLookup(true);" ><i class="fa fa-book"></i></a>
                             <a class="button is-inverse2 has-fixed-icon"  style="margin-right:10px; height:43px; width:43px;" onclick="paste('#change_address')"><i class="fa fa-files-o"></i></a>
                             <a class="button is-inverse2 has-fixed-icon"  style="height:43px; width:43px;" onclick="$('#change_address').val('').css('background', '').css('color', '');"><i class="fa fa-times"></i></a>
                         </div>
@@ -495,6 +496,7 @@
                         <option value="" title="Filter Address Type" selected >Filter Address Type</option>
                         <option value="Normal" title="Normal">Normal</option>
                         <option value="Stealth" title="Stealth">Stealth</option>
+                        <option value="Group" title="Group">Group</option>
                         <option value="BIP32" title="BIP32">BIP32</option>
                     </select>
                     <table class="footable shadow" data-page-size="20" data-limit-navigation="5" data-filter="#filter-addressbook" id="addressbook-table">
@@ -511,7 +513,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="4" style="background:#131218!important;">
-                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
+                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -537,14 +539,14 @@
             <a class="modal_close" href="#close"><i class="fa fa-times-circle grey"></i></a>
             <div style="white-space:nowrap;">
                 <label for="new-contact-address" class="recipient">Address: </label>
-                <input id="new-contact-address"  class="recipient input_box" style="width: 300px;" data-title="The address to send the payment to  (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a MOIN address (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" onchange="if(base58.check(this)) $('#new-contact-pubkey').val(bridge.getPubKey(this.value, $('#new-contact-name').val()));" maxlength="128" oninput="base58.check(this);"/>
+                <input id="new-contact-address"  class="recipient input_box" style="width: 300px;" data-title="The address to send the payment to  (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" placeholder="Enter a MOIN address (e.g. MXywGBZBowrppUwwNUo1GCRDTibzJi7g2M)" onchange="if(base58.check(this)) $('#new-contact-pubkey').val(bridge.getPubKey(this.value));" maxlength="128" oninput="base58.check(this);"/>
                 <a class="button is-inverse has-fixed-icon" data-title="Choose address from address book" style="margin-right:10px; margin-left:10px; height:43px; width:43px;" onclick="openAddressBook('#new-contact-address', '#new-contact-name', true)"><i class="fa fa-book"></i></a>
                 <a class="button is-inverse has-fixed-icon" data-title="Paste address from clipboard"     style="margin-right:10px; height:43px; width:43px;" onclick="paste('#new-contact-address')"><i class="fa fa-files-o"></i></a>
                 <a class="button is-inverse has-fixed-icon" data-title="Remove this recipient"            style="height:43px; width:43px;" onclick="$('#new-contact-address').val('').css('background', '').css('color', '');"><i class="fa fa-times"></i></a>
             </div>
             <div style="white-space:nowrap;">
                 <label for="new-contact-name" class="recipient">Name: </label>
-                <input id="new-contact-name"  class="recipient input_box" style="width: 475px;" data-title="Enter a label for this address to add it to your address book" placeholder="Enter a label for this address to add it to your address book" onchange="$('#new-contact-pubkey').val(bridge.getPubKey($('#new-contact-address').val(), this.value));" maxlength="128"  />
+                <input id="new-contact-name"  class="recipient input_box" style="width: 475px;" data-title="Enter a label for this address to add it to your address book" placeholder="Enter a label for this address to add it to your address book" onchange="bridge.updateAddressLabel($('#new-contact-address').val(), this.value);" maxlength="128" />
             </div>
             <div id="new-contact-pubkey-row" style="white-space:nowrap;">
                 <label for="new-contact-pubkey" class="recipient">Public Key: </label>
@@ -554,7 +556,7 @@
             <a class="button is-inverse has-icon-spacing" href="javascript:newConversation();">Start Conversation <i class="fa fa-check"></i></a>
         </div>
 
-        <!-- Messages Page -->
+        <!-- Chat Page -->
         <article id="messages" style="display:none;">
             <div class="content top">
                 <h2>Chat</h2>
@@ -701,7 +703,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="5" style="background:#131218!important;">
-                                    <div class="pagination pagination-centegrey hide-if-no-paging"></div>
+                                    <div class="pagination pagination-centered hide-if-no-paging"></div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -1118,7 +1120,7 @@
                                 <option value="0" title="Moin">MOIN</option>
                                 <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
                                 <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
-                                <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
+                                <option value="3" title="Moinlet (1 / 100000000)">Moinlet</option>
                             </select>
                         </div>
                         <div class="option">
@@ -1133,7 +1135,7 @@
                                 <option value="0" title="Moin">MOIN</option>
                                 <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
                                 <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
-                                <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
+                                <option value="3" title="Moinlet (1 / 100000000)">Moinlet</option>
                             </select>
                         </div>
                         <div class="option">
@@ -1149,8 +1151,8 @@
                             <input  id="optMaxRingSize" type="number" max="200" placeholder="100" step="1" />
                         </div>
                         <!--div class="option">
-                            <input  id="optAutogreyeemMOINX" type="checkbox" data-title="MOINX will be converted to MOIN as soon as has confirmed and wallet is unlocked" />
-                            <label for="optAutogreyeemMOINX" class="option" data-title="MOINX will be converted to MOIN as soon as has confirmed and wallet is unlocked">Auto-greyeem moinX</label>
+                            <input  id="optAutoRedeemMOINX" type="checkbox" data-title="MOINX will be converted to MOIN as soon as has confirmed and wallet is unlocked" />
+                            <label for="optAutoRedeemMOINX" class="option" data-title="MOINX will be converted to MOIN as soon as has confirmed and wallet is unlocked">Auto-redeem moinX</label>
                         </div-->
                         <div class="option">
                             <input  id="optAutoRingSize" type="checkbox" data-title="Automatically select ring size based on best available output counts" />
@@ -1232,7 +1234,7 @@
                                 <option value="0" title="Moin">MOIN</option>
                                 <option value="1" title="Milli-Moin (1 / 1000)">mMOIN</option>
                                 <option value="2" title="Micro-Moin (1 / 1000000)">&micro;MOIN</option>
-                                <option value="3" title="Moinoshi (1 / 100000000)">Moinoshi</option>
+                                <option value="3" title="Moinlet (1 / 100000000)">Moinlet</option>
                             </select>
                         </div>
                         <div class="option">
@@ -1244,7 +1246,7 @@
                             <label for="optDisplayAddresses" class="option">Display addresses in transaction list</label>
                         </div>
                         <div class="option select-multiple">
-                            <label for="optNotifications" class="option">Notifications:</label>
+                            <label for="optNotifications" class="option" data-title="Hold down Ctrl to select multiple options" style="cursor:help">Notifications:</label>
                             <select id="optNotifications" class="button is-inverse has-fixed-icon" multiple size="8">
                                 <!--optgroup label="Transactions">
                                     <option>Received with</option>
@@ -1263,7 +1265,7 @@
                             </select>
                         </div>
                         <div class="option select-multiple">
-                            <label for="optVisibleTransactions" class="option">Visible Transaction Types:</label>
+                            <label for="optVisibleTransactions" class="option" data-title="Hold down Ctrl to select multiple options" style="cursor:help">Visible Transaction Types:</label>
                             <select id="optVisibleTransactions" class="button is-inverse has-fixed-icon" multiple size="7">
                                 <!--option>Received with</option>
                                 <option>Received from</option>
@@ -1283,26 +1285,19 @@
                     </div>
                 </div><!-- /content -->
             </div><!-- /bottom -->
-        </article><!-- /chaindata page -->
+        </article><!-- /options page -->
 
 
         <!-- News Page -->
         <article id="news" style="display:none;">
             <div class="content top">
                 <h2>News</h2>
-				<p>News and updates from the MOIN team. </p>
             </div>
 
             <div class="bottom">
 
                 <div class="content flex">
-              <div class="flex-item grow one-third-width">
-                            <h2>Announcements</h2>
 
-                            <div id="announcements">
-
-                            </div>
-                        </div>
                 </div><!-- /content -->
             </div><!-- /bottom -->
         </article><!-- /news page -->
