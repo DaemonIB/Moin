@@ -203,7 +203,7 @@
                     <div>
                         <table id="balances">
                             <tr><td>Spendable:      </td><td class="balance" >0.00</td><td class="unit">MOIN</td></tr>
-                            <tr><td>MOINX:         </td><td id="moinX_balance">0.00</td><td class="unit">MOIN</td></tr>
+                            <tr><td>MOINX:         </td><td class="moinX_balance">0.00</td><td class="unit">MOIN</td></tr>
                             <tr><td>Reserved:       </td><td id="reserved"   >0.00</td><td class="unit">MOIN</td></tr>
                             <tr><td>Stake:          </td><td id="stake"      >0.00</td><td class="unit">MOIN</td></tr>
                             <tr><td>Unconfirmed:    </td><td id="unconfirmed">0.00</td><td class="unit">MOIN</td></tr>
@@ -320,9 +320,9 @@
                     <div class="ui-buttons">
                         <a class="button is-inverse has-icon-spacing" onclick="addRecipient();" data-title="Send to multiple recipients at once"><i class="fa fa-plus"></i>Add Recipient</a>
                         <a  class="button is-inverse has-icon-spacing" onclick="clearRecipients();" data-title="Remove all transaction fields"><i class="fa fa-close"></i>Clear All</a>
-                        <span data-title="Current spendable balance"><a class="current_spenable_balance"><b>Balance:</b>
+                        <span data-title="Current spendable balance"><a class="current_spendable_balance"><b>Balance:</b>
                           <span id="spend_moin"   ><span class="balance"       >0.00</span> <span class="unit">MOIN</span></span>
-                          <span id="spend_moinx"><span class="moinX_balance">0.00</span> <span class="unit">MOINX</span></span>
+                          <span id="spend_moinX"><span class="moinX_balance">0.00</span> <span class="unit">MOINX</span></span>
                         </span>
                         <a class="button is-inverse has-icon-spacing"  id="suggest_ring_size" href="javascript:suggestRingSize();">Suggest Ring Size <i class="fa fa-calculator"></i></a>
                         <a class="button is-inverse has-icon-spacing" onclick="sendCoins();" data-title="Confirm the send action"><i class="fa fa-arrow-right"></i>Send</a>

@@ -561,7 +561,7 @@ function openContextMenu(el)
 var overviewPage = {
     init: function() {
         this.balance = $(".balance"),
-        this.moinXBal = $("#moinX_balance"),
+        this.moinXBal = $(".moinX_balance"),
         this.reserved = $("#reserved"),
         this.stake = $("#stake"),
         this.unconfirmed = $("#unconfirmed"),
@@ -993,13 +993,15 @@ function changeTxnType()
     {
         $("#tx_ringsize,#suggest_ring_size")[bridge.info.options.AutoRingSize == true ? 'hide' : 'show']();
         $("#coincontrol,#spend_moin").hide();
-        $("#spend_shadow").show();
+        $("#spend_moinX").show();
+        $("#spend_moinX > .unit").html("MOINX")
         toggleCoinControl(false);
     }
     else
     {
         $("#tx_ringsize,#suggest_ring_size,#spend_moinX").hide();
         $("#coincontrol,#spend_moin").show();
+        $("#spend_moin > .unit").html("MOIN")
     }
 
     resizeFooter();
