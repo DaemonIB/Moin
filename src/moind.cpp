@@ -143,7 +143,7 @@ void WaitForShutdown(boost::thread_group* threadGroup)
 bool AppInit(int argc, char* argv[])
 {
     boost::thread_group threadGroup;
-    
+
     bool fRet = false;
     try
     {
@@ -157,10 +157,10 @@ bool AppInit(int argc, char* argv[])
             fprintf(stderr, "Error: Specified directory does not exist\n");
             Shutdown();
         };
-        
+
         ReadConfigFile(mapArgs, mapMultiArgs);
-        
-        if (mapArgs.count("-?") || mapArgs.count("--help"))
+
+        if (mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help"))
         {
             // First part of help message is specific to bitcoind / RPC client
             std::string strUsage = _("MOIN version") + " " + FormatFullVersion() + "\n\n" +

@@ -180,7 +180,7 @@ $ mv build/out/moin-deps-osx-gitian inputs/
 $ ./bin/gbuild ../moin/contrib/gitian-descriptors/qt-osx.yml
 $ mv build/out/qt-osx*.tar.xz inputs/
 
-$ ./bin/gbuild --commit moinoin=HEAD ../moin/contrib/gitian-descriptors/gitian-osx.yml
+$ ./bin/gbuild --commit moin=HEAD ../moin/contrib/gitian-descriptors/gitian-osx.yml
 $ mkdir -p ../compiled/osx
 $ mv build/out/* ../compiled/osx/
 

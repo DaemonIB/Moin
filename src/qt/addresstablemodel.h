@@ -13,6 +13,7 @@ enum EAddressType {
     AT_Normal = 1,  /**< Bitcoin address */
     AT_Stealth = 2,  /**< Stealth address */
     AT_BIP32 = 3, /**< BIP32 address */
+    AT_Group = 4, /**< BIP32 address */
 };
 
 /**
@@ -75,6 +76,10 @@ public:
     /* Look up pubkey for address in address book, if not found return empty string.
      */
     QString pubkeyForAddress(const QString &address, const bool lookup=true) const;
+
+    /* Derive address for pubkey, if invalid return empty string.
+     */
+    QString addressForPubkey(const QString &address) const;
 
     /* Look up row index of an address in the model.
        Return -1 if not found.

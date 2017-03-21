@@ -1,6 +1,6 @@
 Moin
 
-Copyright (c) 2015-2016 Moin Developers
+Copyright (c) 2015-2017 Moin Developers
 Copyright (c) 2014-2015 ShadowCoin Developers
 Copyright (c) 2014 BlackCoin Developers
 Copyright (c) 2013 NovaCoin Developers

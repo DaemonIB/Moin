@@ -501,7 +501,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
                    << "Type=Application\n" \
                    << "Name=Moin\n" \
                    << "Exec=" << pszExePath << "%u -min\n" \
-                   << "Icon=" <<  QFileInfo(":/icons/bitcoin").absoluteFilePath().toStdString() << "\n" \
+                   << "Icon=" <<  QFileInfo(":/icons/moin").absoluteFilePath().toStdString() << "\n" \
                    << "Terminal=false\n" \
                    << "Hidden=false\n" \
                    << "Categories=Application;Network;\n" \

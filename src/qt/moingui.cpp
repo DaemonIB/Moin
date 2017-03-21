@@ -156,11 +156,13 @@ void MoinGUI::pageLoaded(bool ok)
         timerStakingIcon->start(15 * 1000);
         updateStakingIcon();
     }
+
 }
 
 void MoinGUI::addJavascriptObjects()
 {
     documentFrame->addToJavaScriptWindowObject("bridge", bridge);
+
 }
 
 void MoinGUI::urlClicked(const QUrl & link)
@@ -178,7 +180,7 @@ void MoinGUI::createActions()
     quitAction->setToolTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
-    aboutAction = new QAction(QIcon(":/icons/bitcoin"), tr("&About MOIN"), this);
+    aboutAction = new QAction(QIcon(":/icons/moin"), tr("&About MOIN"), this);
     aboutAction->setToolTip(tr("Show information about MOIN"));
     aboutAction->setMenuRole(QAction::AboutRole);
     aboutQtAction = new QAction(QIcon(":/trolltech/qmessagebox/images/qtlogo-64.png"), tr("About &Qt"), this);
@@ -187,7 +189,7 @@ void MoinGUI::createActions()
     optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options..."), this);
     optionsAction->setToolTip(tr("Modify configuration options for MOIN"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
-    toggleHideAction = new QAction(QIcon(":/icons/bitcoin"), tr("&Show / Hide"), this);
+    toggleHideAction = new QAction(QIcon(":/icons/moin"), tr("&Show / Hide"), this);
     encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
     encryptWalletAction->setToolTip(tr("Encrypt or decrypt wallet"));
     encryptWalletAction->setCheckable(true);
@@ -399,19 +401,20 @@ void MoinGUI::setNumConnections(int count)
 {
     QWebElement connectionsIcon = documentFrame->findFirstElement("#connectionsIcon");
 
-    QString icon;
+    QString className;
+
     switch(count)
     {
-    case 0:          icon = "qrc:///icons/connect_0"; break;
-    case 1: case 2:  icon = "qrc:///icons/connect_1"; break;
-    case 3: case 4:  icon = "qrc:///icons/connect_2"; break;
-    case 5: case 6:  icon = "qrc:///icons/connect_3"; break;
-    case 7: case 8:  icon = "qrc:///icons/connect_4"; break;
-    case 9: case 10: icon = "qrc:///icons/connect_5"; break;
-    default:         icon = "qrc:///icons/connect_6"; break;
+    case 0:          className = "connect-0"; break;
+    case 1: case 2:  className = "connect-1"; break;
+    case 3: case 4:  className = "connect-2"; break;
+    case 5: case 6:  className = "connect-3"; break;
+    default:         className = "connect-4"; break;
     }
-    connectionsIcon.setAttribute("src", icon);
-    connectionsIcon.setAttribute("data-title", tr("%n active connection(s) to the MOIN network", "", count));
+
+    connectionsIcon.setAttribute("class", className);
+    connectionsIcon.setAttribute("src", "qrc:///icons/" + className.replace("-", "_"));
+    connectionsIcon.setAttribute("data-title", tr("%n active connection(s) to Moin network", "", count));
 }
 
 void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
@@ -419,11 +422,14 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
     QWebElement blocksIcon  = documentFrame->findFirstElement("#blocksIcon");
     QWebElement syncingIcon = documentFrame->findFirstElement("#syncingIcon");
     QWebElement syncProgressBar = documentFrame->findFirstElement("#syncProgressBar");
+    QWebElement header = documentFrame->findFirstElement(".header");
 
     // don't show / hide progress bar and its label if we have no connection to the network
     if (!clientModel || (clientModel->getNumConnections() == 0 && !clientModel->isImporting()))
     {
         syncProgressBar.setAttribute("style", "display:none;");
+        header.removeAttribute("style");
+
 
         return;
     }
@@ -450,17 +456,19 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
 
         count = pwalletMain->nLastFilteredHeight;
         syncProgressBar.removeAttribute("style");
+        header.setAttribute("style", "background-position-x: -80px;");
     } else
     if (count < nTotalBlocks)
     {
         int nRemainingBlocks = nTotalBlocks - count;
         float nPercentageDone = count / (nTotalBlocks * 0.01f);
         syncProgressBar.removeAttribute("style");
+        header.setAttribute("style", "background-position-x: -80px;");
 
         if (strStatusBarWarnings.isEmpty())
         {
             bridge->networkAlert("");
-            tooltip = tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing with network...");
+            tooltip = clientModel->isImporting() ? tr("Importing blocks...") : tr("Synchronizing with network...");
 
             if (nNodeMode == NT_FULL)
             {
@@ -478,10 +486,11 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
         }
 
         tooltip += (tooltip.isEmpty()? "" : "\n")
-                 + tr(clientModel->isImporting() ? "Imported " : "Downloaded ") + tr("%1 of %2 %3 of transaction history (%4% done).").arg(count).arg(nTotalBlocks).arg(sBlockTypeMulti).arg(nPercentageDone, 0, 'f', 2);
+		 + (clientModel->isImporting() ? tr("Imported") : tr("Downloaded")) + " "
+                 + tr("%1 of %2 %3 of transaction history (%4% done).").arg(count).arg(nTotalBlocks).arg(sBlockTypeMulti).arg(nPercentageDone, 0, 'f', 2);
     } else
     {
-        tooltip = tr(clientModel->isImporting() ? "Imported " : "Downloaded ") + tr("%1 blocks of transaction history.").arg(count);
+        tooltip = (clientModel->isImporting() ? tr("Imported") : tr("Downloaded")) + " " + tr("%1 blocks of transaction history.").arg(count);
     }
 
     // Override progressBarLabel text when we have warnings to display
@@ -532,6 +541,7 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
             outOfSync.setStyleProperty("display", "none");
 
         syncProgressBar.setAttribute("style", "display:none;");
+        header.removeAttribute("style");
     } else
     {
         tooltip = tr("Catching up...") + "\n" + tooltip;
@@ -545,6 +555,7 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
             outOfSync.setStyleProperty("display", "inline");
 
         syncProgressBar.removeAttribute("style");
+        header.setAttribute("style", "background-position-x:-80px;");
     }
 
     if (!text.isEmpty())
@@ -553,8 +564,8 @@ void MoinGUI::setNumBlocks(int count, int nTotalBlocks)
         tooltip += tr("Last received %1 was generated %2.").arg(sBlockType).arg(text);
     };
 
-    blocksIcon.setAttribute("data-title", tooltip);
-    syncingIcon.setAttribute("data-title", tooltip);
+    blocksIcon     .setAttribute("data-title", tooltip);
+    syncingIcon    .setAttribute("data-title", tooltip);
     syncProgressBar.setAttribute("data-title", tooltip);
     syncProgressBar.setAttribute("value", QString::number(count));
     syncProgressBar.setAttribute("max",   QString::number(nTotalBlocks));
@@ -621,7 +632,7 @@ void MoinGUI::askFee(qint64 nFeeRequired, bool *payFee)
 
 void MoinGUI::incomingTransaction(const QModelIndex & parent, int start, int end)
 {
-    if(!walletModel || !clientModel || clientModel->inInitialBlockDownload() || !nNodeState == NS_READY)
+    if(!walletModel || !clientModel || clientModel->inInitialBlockDownload() || nNodeState != NS_READY)
         return;
 
     TransactionTableModel *ttm = walletModel->getTransactionTableModel();
@@ -751,6 +762,7 @@ void MoinGUI::setEncryptionStatus(int status)
 {
     QWebElement encryptionIcon    = documentFrame->findFirstElement("#encryptionIcon");
     QWebElement encryptButton     = documentFrame->findFirstElement("#encryptWallet");
+    QWebElement encryptMenuItem   = documentFrame->findFirstElement(".encryptWallet");
     QWebElement changePassphrase  = documentFrame->findFirstElement("#changePassphrase");
     QWebElement toggleLock        = documentFrame->findFirstElement("#toggleLock");
     QWebElement toggleLockIcon    = documentFrame->findFirstElement("#toggleLock i");
@@ -760,6 +772,7 @@ void MoinGUI::setEncryptionStatus(int status)
         encryptionIcon.setAttribute("style", "display:none;");
         changePassphrase.addClass("none");
         toggleLock.addClass("none");
+        encryptMenuItem.removeClass("none");
         encryptWalletAction->setChecked(false);
         changePassphraseAction->setEnabled(false);
         unlockWalletAction->setVisible(false);
@@ -767,23 +780,48 @@ void MoinGUI::setEncryptionStatus(int status)
         encryptWalletAction->setEnabled(true);
         break;
     case WalletModel::Unlocked:
+        encryptMenuItem  .addClass("none");
         encryptionIcon.removeAttribute("style");
         encryptionIcon.removeClass("fa-lock");
+        encryptionIcon.removeClass("encryption");
         encryptionIcon.   addClass("fa-unlock");
+        encryptionIcon.   addClass("no-encryption");
+        encryptMenuItem  .addClass("none");
         toggleLockIcon.removeClass("fa-unlock");
+        toggleLockIcon.removeClass("fa-unlock-alt");
         toggleLockIcon.   addClass("fa-lock");
         encryptionIcon   .setAttribute("src", "qrc:///icons/lock_open");
 
-        if (fWalletUnlockStakingOnly)
+        if (fWalletUnlockStakingOnly || fWalletUnlockMessagingEnabled)
         {
-            encryptionIcon   .setAttribute("data-title", tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for staking only"));
+            QString datatitle = "";
+
+            if(fWalletUnlockStakingOnly && fWalletUnlockMessagingEnabled)
+                datatitle.append(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for staking and messaging only."));
+
+            else if(fWalletUnlockMessagingEnabled)
+                datatitle.append(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for messaging only."));
+
+            else if(fWalletUnlockStakingOnly)
+                datatitle.append(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b> for staking only."));
+
+
+            encryptionIcon   .setAttribute("data-title", datatitle);
             encryptionIcon.removeClass("red");
             encryptionIcon.addClass("orange");
+            encryptionIcon.addClass("encryption-stake");
+
+            toggleLockIcon  .removeClass("moin-blue");
+            toggleLockIcon     .addClass("orange");
         } else
         {
             encryptionIcon   .setAttribute("data-title", tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
             encryptionIcon.addClass("red");
             encryptionIcon.removeClass("orange");
+            encryptionIcon.removeClass("encryption-stake");
+
+            toggleLockIcon  .removeClass("orange");
+            toggleLockIcon     .addClass("moin-blue");
         };
 
         encryptButton.addClass("none");
@@ -798,16 +836,21 @@ void MoinGUI::setEncryptionStatus(int status)
     case WalletModel::Locked:
         encryptionIcon.removeAttribute("style");
         encryptionIcon.removeClass("fa-unlock");
+        encryptionIcon.removeClass("no-encryption");
+        encryptionIcon.removeClass("encryption-stake");
         encryptionIcon.   addClass("fa-lock");
+        encryptionIcon.   addClass("encryption");
         toggleLockIcon.removeClass("fa-lock");
-        toggleLockIcon.   addClass("fa-unlock");
+        toggleLockIcon.   addClass("fa-unlock-alt");
         encryptionIcon   .setAttribute("data-title", tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
 
-        encryptionIcon.addClass("red");
-        encryptionIcon.removeClass("orange");
-        encryptButton.addClass("none");
+        encryptionIcon     .addClass("red");
+        encryptionIcon  .removeClass("orange");
+        encryptButton      .addClass("none");
+        encryptMenuItem    .addClass("none");
         changePassphrase.removeClass("none");
-        toggleLock.removeClass("none");
+        toggleLockIcon  .removeClass("orange");
+        toggleLockIcon     .addClass("moin-blue");
         encryptWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
         unlockWalletAction->setVisible(true);

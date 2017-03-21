@@ -14,7 +14,7 @@ class SendCoinsRecipient;
 #include <QModelIndex>
 
 
-
+extern bool fWalletUnlockMessagingEnabled;
 
 class MoinBridge : public QObject
 {
@@ -42,7 +42,9 @@ public:
     Q_INVOKABLE QString transactionDetails(QString txid);
     /** Get the pubkey for an address */
     Q_INVOKABLE QString getPubKey(QString address);
-
+    /** Derive the address for a pubkey */
+    Q_INVOKABLE QString addressForPubKey(QString pubkey);
+    
     /** Show debug dialog */
     Q_INVOKABLE QVariantMap userAction(QVariantMap action);
 
@@ -88,11 +90,13 @@ public:
     Q_INVOKABLE QVariantMap extKeySetMaster(QString extKeyID);
     Q_INVOKABLE QVariantMap extKeySetActive(QString extKeySetActive, QString isActive);
 
+    Q_INVOKABLE QString translateHtmlString(QString string);
+
 signals:
     void emitPaste(QString text);
     void emitTransactions(QVariantList transactions);
     void emitAddresses(QVariantList addresses);
-    void emitMessages(QString messages, bool reset);
+    void emitMessages(QVariantList messages, bool reset);
     void emitMessage(QString id, QString type, qint64 sent, qint64 received, QString label_v, QString label, QString labelTo, QString to, QString from, bool read, QString message);
     void emitCoinControlUpdate(unsigned int quantity, qint64 amount, qint64 fee, qint64 afterfee, unsigned int bytes, QString priority, QString low, qint64 change);
     void emitAddressBookReturn(QString address, QString label);
@@ -127,7 +131,7 @@ private slots:
     void insertAddresses(const QModelIndex &parent, int start, int end);
     void insertMessages(const QModelIndex &parent, int start, int end);
 
-    void appendMessages(QString messages, bool reset);
+    void appendMessages(QVariantList messages, bool reset);
 
     void populateMessageTable();
 

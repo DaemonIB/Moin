@@ -1659,7 +1659,7 @@ Dette betyr at det trengs en avgift på minimum %2.</translation>
         <location line="+86"/>
         <location line="+86"/>
         <location line="+32"/>
-        <source>0.00 SDC</source>
+        <source>0.00 MOIN</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -1729,7 +1729,7 @@ Dette betyr at det trengs en avgift på minimum %2.</translation>
     </message>
     <message>
         <location line="+16"/>
-        <source>123.456 SDC</source>
+        <source>123.456 MOIN</source>
         <translation type="unfinished"/>
     </message>
     <message>

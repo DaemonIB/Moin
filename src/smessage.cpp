@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The ShadowCoin developers
+// Copyright (c) 2014-2016 The ShadowCoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -696,7 +696,7 @@ void ThreadSecureMsg()
             } // cs_vNodes
 
             if(fDebugSmsg)
-                LogPrintf("shadow-smsg thread: ignoring - looked peer %d, status on search %u\n", nPeerId, fExists);
+                LogPrintf("moin-smsg thread: ignoring - looked peer %d, status on search %u\n", nPeerId, fExists);
         };
 
         MilliSleep(SMSG_THREAD_DELAY * 1000); //  // check every SMSG_THREAD_DELAY seconds
@@ -928,10 +928,10 @@ int SecureMsgBuildBucketSet()
 
 /*
 SecureMsgAddWalletAddresses
-Enumerates the AddressBook, filters out anon outputs and checks the "real addresses"
-Adds these to the vector smsgAddresses to be used for decryption
+    Enumerates the AddressBook, filters out anon outputs and checks the "real addresses"
+    Adds these to the vector smsgAddresses to be used for decryption
 
-Returns  on success!
+    Returns 0 on success
 */
 
 int SecureMsgAddWalletAddresses()
@@ -1330,23 +1330,34 @@ bool SecureMsgReceiveData(CNode* pfrom, std::string strCommand, CDataStream& vRe
     */
 
     /*
+
+        TODO:
+        Explain better and make use of better terminology such as
+        Node A <-> Node B <-> Node C
+
         Commands
         + smsgInv =
             (1) received inventory of other node.
                 (1.1) sanity checks
             (2) loop through buckets
                 (2.1) sanity checks
-                (2.2) check if bucket is locked to another node, if so continue but don't match. TODO: handle this properly, add critical section, lock on write. On read: nothing changes = no lock
+                (2.2) check if bucket is locked to node C, if so continue but don't match. TODO: handle this properly, add critical section, lock on write. On read: nothing changes = no lock
                     (2.2.3) If our bucket is not locked to another node then add hash to buffer to be requested..
             (3) send smsgShow with list of hashes to request.
 
         + smsgShow =
+            (1) received a list of requested bucket hashes which the other party does not have.
+            (2) respond with smsgHave - contains all the message hashes within the requested buckets. 
         + smsgHave =
+            (1) A list of all the message hashes which a node has in response to smsgShow.
         + smsgWant =
-        + smsgMsg = ??
-        + smsgPing
-        + smsgPong
-        + smsgMatch
+            (1) A list of the message hashes that a node does not have and wants to retrieve from the node who sent smsgHave
+        + smsgMsg = 
+            (1) In response to 
+        + smsgPing = ping request
+        + smsgPong = pong response
+        + smsgMatch =
+            Obsolete, it used tell a node up to which time their messages were synced in response to smsg, but this is overhead because we know exactly when we sent them
 
     */
 
@@ -3430,7 +3441,7 @@ int SecureMsgEncrypt(SecureMessage &smsg, const std::string &addressFrom, const 
     };
 
     smsg.version[0] = 1;
-    smsg.version[1] = 1;
+    smsg.version[1] = 2; // Add IV to HMAC
     smsg.timestamp = GetTime();
 
     CBitcoinAddress coinAddrFrom;
@@ -3622,7 +3633,7 @@ int SecureMsgEncrypt(SecureMessage &smsg, const std::string &addressFrom, const 
 
 
     // -- Calculate a 32 byte MAC with HMACSHA256, using key_m as salt
-    //    Message authentication code, (hash of timestamp + destination + payload)
+    //    Message authentication code, (hash of timestamp + iv + destination + payload)
     bool fHmacOk = true;
     uint32_t nBytes = 32;
     HMAC_CTX ctx;
@@ -3630,6 +3641,7 @@ int SecureMsgEncrypt(SecureMessage &smsg, const std::string &addressFrom, const 
 
     if (!HMAC_Init_ex(&ctx, &key_m[0], 32, EVP_sha256(), NULL)
         || !HMAC_Update(&ctx, (uint8_t*) &smsg.timestamp, sizeof(smsg.timestamp))
+        || !HMAC_Update(&ctx, (uint8_t*) smsg.iv, sizeof(smsg.iv))
         || !HMAC_Update(&ctx, &vchCiphertext[0], vchCiphertext.size())
         || !HMAC_Final(&ctx, smsg.mac, &nBytes)
         || nBytes != 32)
@@ -3906,19 +3918,31 @@ int SecureMsgDecrypt(bool fTestOnly, std::string &address, uint8_t *pHeader, uin
     std::vector<uint8_t> key_m(&vchHashedDec[32], &vchHashedDec[32]+32);
 
 
-    // -- Message authentication code, (hash of timestamp + destination + payload)
+    // -- Message authentication code, (hash of timestamp + iv + destination + payload)
     uint8_t MAC[32];
     bool fHmacOk = true;
     uint32_t nBytes = 32;
     HMAC_CTX ctx;
     HMAC_CTX_init(&ctx);
 
-    if (!HMAC_Init_ex(&ctx, &key_m[0], 32, EVP_sha256(), NULL)
-        || !HMAC_Update(&ctx, (uint8_t*) &psmsg->timestamp, sizeof(psmsg->timestamp))
-        || !HMAC_Update(&ctx, pPayload, nPayload)
-        || !HMAC_Final(&ctx, MAC, &nBytes)
-        || nBytes != 32)
-        fHmacOk = false;
+    if (psmsg->version[1] == 1)
+    {
+        if (!HMAC_Init_ex(&ctx, &key_m[0], 32, EVP_sha256(), NULL)
+            || !HMAC_Update(&ctx, (uint8_t*) &psmsg->timestamp, sizeof(psmsg->timestamp))
+            || !HMAC_Update(&ctx, pPayload, nPayload)
+            || !HMAC_Final(&ctx, MAC, &nBytes)
+            || nBytes != 32)
+            fHmacOk = false;
+    } else
+    {
+        if (!HMAC_Init_ex(&ctx, &key_m[0], 32, EVP_sha256(), NULL)
+            || !HMAC_Update(&ctx, (uint8_t*) &psmsg->timestamp, sizeof(psmsg->timestamp))
+            || !HMAC_Update(&ctx, (uint8_t*) psmsg->iv, sizeof(psmsg->iv))
+            || !HMAC_Update(&ctx, pPayload, nPayload)
+            || !HMAC_Final(&ctx, MAC, &nBytes)
+            || nBytes != 32)
+            fHmacOk = false;
+    }
 
     HMAC_CTX_cleanup(&ctx);
 

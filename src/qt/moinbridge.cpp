@@ -31,6 +31,8 @@
 
 #include "extkey.h"
 
+#include "bridgetranslations.h"
+
 #include <QApplication>
 #include <QThread>
 #include <QWebFrame>
@@ -260,33 +262,42 @@ class MessageThread : public QThread
     Q_OBJECT
 
 signals:
-    void emitMessages(const QString & messages, bool reset);
+    void emitMessages(const QVariantList & messages, bool reset);
 
 public:
     MessageModel *mtm;
 
-    QString addMessage(int row)
+    QVariantMap addMessage(int row)
     {
-        //QString message = "{\"id\":\"%10\",\"type\":\"%1\",\"sent_date\":\"%2\",\"received_date\":\"%3\", \"label_value\":\"%4\",\"label\":\"%5\",\"labelTo\":\"%11\",\"to_address\":\"%6\",\"from_address\":\"%7\",\"message\":\"%8\",\"read\":%9},";
-        return QString("{\"id\":\"%10\",\"type\":\"%1\",\"sent_date\":\"%2\",\"received_date\":\"%3\", \"label_value\":\"%4\",\"label\":\"%5\",\"labelTo\":\"%11\",\"to_address\":\"%6\",\"from_address\":\"%7\",\"message\":\"%8\",\"read\":%9},")
-                .arg(mtm->index(row, MessageModel::Type)            .data().toString())
-                .arg(QString::number(mtm->index(row, MessageModel::SentDateTime)    .data().toDateTime().toTime_t()).toHtmlEscaped())
-                .arg(QString::number(mtm->index(row, MessageModel::ReceivedDateTime).data().toDateTime().toTime_t()).toHtmlEscaped())
-                .arg(mtm->index(row, MessageModel::Label)           .data(MessageModel::LabelRole).toString())
-                .arg(mtm->index(row, MessageModel::Label)           .data().toString().replace("\\", "\\\\").replace("/", "\\/").replace("\"","\\\""))
-                .arg(mtm->index(row, MessageModel::ToAddress)       .data().toString())
-                .arg(mtm->index(row, MessageModel::FromAddress)     .data().toString())
-                .arg(mtm->index(row, MessageModel::Message)         .data().toString().toHtmlEscaped().replace("\\", "\\\\").replace("\"","\\\"").replace("\n", "\\n"))
-                .arg(mtm->index(row, MessageModel::Read)            .data().toBool())
-                .arg(mtm->index(row, MessageModel::Key)             .data().toString())
-                .arg(mtm->index(row, MessageModel::LabelTo)         .data().toString().replace("\\", "\\\\").replace("/", "\\/").replace("\"","\\\""));
+        QVariantMap r;
+
+        //message
+        r.insert("id", mtm->index(row, MessageModel::Key).data().toString().toHtmlEscaped());
+        r.insert("type", mtm->index(row, MessageModel::Type).data().toString().toHtmlEscaped());
+        r.insert("message", mtm->index(row, MessageModel::Message).data().toString().toHtmlEscaped());
+        r.insert("read", mtm->index(row, MessageModel::Read).data().toBool());
+
+        //time
+        r.insert("sent_date", QString::number(mtm->index(row, MessageModel::SentDateTime).data().toDateTime().toTime_t()));
+        r.insert("received_date", QString::number(mtm->index(row, MessageModel::ReceivedDateTime).data().toDateTime().toTime_t()));
+
+        //receiver
+        r.insert("to_address", mtm->index(row, MessageModel::ToAddress).data().toString().toHtmlEscaped());
+        r.insert("label_to", mtm->index(row, MessageModel::LabelTo).data().toString().toHtmlEscaped());
+
+        //sender
+        r.insert("from_address", mtm->index(row, MessageModel::FromAddress).data().toString().toHtmlEscaped());
+        r.insert("label_from", mtm->index(row, MessageModel::Label).data().toString().toHtmlEscaped());
+        r.insert("label_from_role", mtm->index(row, MessageModel::Label).data(MessageModel::LabelRole).toString().toHtmlEscaped());
+
+        return r;
     }
 
 protected:
     void run()
     {
         int row = -1;
-        QString messages;
+        QVariantList messages;
         while (mtm->index(++row, 0, QModelIndex()).isValid())
             messages.append(addMessage(row));
 
@@ -475,12 +486,12 @@ bool MoinBridge::sendCoins(bool fUseCoinControl, QString sChangeAddr)
                 nAnonOutputs++;
                 break;
             case TXT_ANON_TO_ANON:
-                formatted.append(tr("<b>%1</b>, ring size %2 to MOINX %3 (%4)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::MOIN, rcp.amount), QString::number(rcp.nRingSize), Qt::escape(rcp.label), rcp.address));
+                formatted.append(tr("<b>%1</b> MOINX, ring size %2 to MOINX %3 (%4)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::MOIN, rcp.amount), QString::number(rcp.nRingSize), Qt::escape(rcp.label), rcp.address));
                 inputType = 1;
                 nAnonOutputs++;
                 break;
             case TXT_ANON_TO_MOIN:
-                formatted.append(tr("<b>%1</b>, ring size %2 to MOIN %3 (%4)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::MOIN, rcp.amount), QString::number(rcp.nRingSize), Qt::escape(rcp.label), rcp.address));
+                formatted.append(tr("<b>%1</b> MOINX, ring size %2 to MOIN %3 (%4)").arg(BitcoinUnits::formatWithUnit(BitcoinUnits::MOIN, rcp.amount), QString::number(rcp.nRingSize), Qt::escape(rcp.label), rcp.address));
                 inputType = 1;
                 break;
             default:
@@ -859,9 +870,9 @@ bool MoinBridge::deleteAddress(QString address)
 }
 
 // Messages
-void MoinBridge::appendMessages(QString messages, bool reset)
+void MoinBridge::appendMessages(QVariantList messages, bool reset)
 {
-    emitMessages("[" + messages + "]", reset);
+    emitMessages(messages, reset);
 }
 
 void MoinBridge::appendMessage(int row)
@@ -872,7 +883,7 @@ void MoinBridge::appendMessage(int row)
                 window->messageModel->index(row, MessageModel::ReceivedDateTime).data().toDateTime().toTime_t(),
                 window->messageModel->index(row, MessageModel::Label)           .data(MessageModel::LabelRole).toString().toHtmlEscaped(),
                 window->messageModel->index(row, MessageModel::Label)           .data().toString().replace("\"","\\\"").replace("\\", "\\\\").replace("/", "\\/").toHtmlEscaped(),
-                window->messageModel->index(row, MessageModel::LabelTo)           .data().toString().replace("\"","\\\"").replace("\\", "\\\\").replace("/", "\\/").toHtmlEscaped(),
+                window->messageModel->index(row, MessageModel::LabelTo)         .data().toString().replace("\"","\\\"").replace("\\", "\\\\").replace("/", "\\/").toHtmlEscaped(),
                 window->messageModel->index(row, MessageModel::ToAddress)       .data().toString().toHtmlEscaped(),
                 window->messageModel->index(row, MessageModel::FromAddress)     .data().toString().toHtmlEscaped(),
                 window->messageModel->index(row, MessageModel::Read)            .data().toBool(),
@@ -883,7 +894,7 @@ void MoinBridge::populateMessageTable()
 {
     thMessage->mtm = window->messageModel;
 
-    connect(thMessage, SIGNAL(emitMessages(QString, bool)), SLOT(appendMessages(QString, bool)));
+    connect(thMessage, SIGNAL(emitMessages(QVariantList, bool)), SLOT(appendMessages(QVariantList, bool)));
     thMessage->start();
 }
 
@@ -911,6 +922,11 @@ QString MoinBridge::getPubKey(QString address)
     return addressModel->atm->pubkeyForAddress(address);
 }
 
+QString MoinBridge::addressForPubKey(QString pubkey)
+{
+    return addressModel->atm->addressForPubkey(pubkey);
+}
+
 bool MoinBridge::setPubKey(QString address, QString pubkey)
 {
     std::string sendTo = address.toStdString();
@@ -920,13 +936,22 @@ bool MoinBridge::setPubKey(QString address, QString pubkey)
     return res == 0||res == 4;
 }
 
+
+
 bool MoinBridge::sendMessage(const QString &address, const QString &message, const QString &from)
 {
-    WalletModel::UnlockContext ctx(window->walletModel->requestUnlock());
+    bool is_encrypted = window->walletModel->getEncryptionStatus() != WalletModel::Unencrypted;
 
-    // Unlock wallet was cancelled
-    if(!ctx.isValid())
-        return false;
+    //only care about fWalletUnlockMessagingEnabled if wallet is encrypted.
+    if (is_encrypted)
+    {
+        if (!fWalletUnlockMessagingEnabled)
+            window->toggleLock();
+
+        //check again if the unlocked it
+        if (!fWalletUnlockMessagingEnabled)
+            return false;
+    }
 
     MessageModel::StatusCode sendstatus = thMessage->mtm->sendMessage(address, message, from);
 
@@ -1010,7 +1035,6 @@ QString MoinBridge::joinGroupChat(QString privkey, QString label)
     bool fGood = vchSecret.SetString(strSecret);
 
     if (!fGood) return "false"; //throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid private key");
-    if (fWalletUnlockStakingOnly) return "false"; //throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Wallet is unlocked for staking only.");
 
     CKey key = vchSecret.GetKey();
     CPubKey pubkey = key.GetPubKey();
@@ -1050,7 +1074,8 @@ QVariantList MoinBridge::inviteGroupChat(QString qsaddress, QVariantList invites
 
     QString actualLabel = getAddressLabel(qsaddress);
 
-    if(!actualLabel.startsWith("group_")){
+    if (!actualLabel.startsWith("group_"))
+    {
         LogPrintf("[inviteGroupChat] -- This should never happen, if it does please notify devteam.\n");
         QMessageBox::warning(window, tr("Sanity Error!"),
             tr("Error: a sanity check prevented the transfer of a non-group private key, please close your wallet and report this error to the development team as soon as possible."),
@@ -1133,8 +1158,23 @@ void MoinBridge::connectSignals()
     connect(addressModel->atm,            SIGNAL(dataChanged(QModelIndex,QModelIndex)), SLOT(updateAddresses(QModelIndex,QModelIndex)));
     connect(addressModel->atm,            SIGNAL(rowsInserted(QModelIndex,int,int)),    SLOT(insertAddresses(QModelIndex,int,int)));
 
-    connect(thMessage->mtm, SIGNAL(rowsInserted(QModelIndex,int,int)),    SLOT(insertMessages(QModelIndex,int,int)));
-    connect(thMessage->mtm, SIGNAL(modelReset()),                         SLOT(populateMessageTable()));
+    connect(thMessage->mtm, SIGNAL(rowsInserted(QModelIndex,int,int)), SLOT(insertMessages(QModelIndex,int,int)));
+    connect(thMessage->mtm, SIGNAL(modelReset()),                      SLOT(populateMessageTable()));
+}
+
+
+QString MoinBridge::translateHtmlString(QString string)
+{
+    int i = 0;
+    while (html_strings[i] != 0)
+    {
+        if (html_strings[i] == string)
+            return tr(html_strings[i]);
+
+        i++;
+    }
+
+    return string;
 }
 
 QVariantMap MoinBridge::userAction(QVariantMap action)
@@ -1640,9 +1680,6 @@ QVariantMap MoinBridge::verifyMessage(QString address, QString message, QString 
 
     return result;
 }
-
-
-// Key Management
 
 QVariantMap MoinBridge::getNewMnemonic(QString password, QString language)
 {
