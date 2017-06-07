@@ -10,11 +10,11 @@
 
 using namespace std;
 
-static const string strSecret1     ("7QRR3XwvHW963ERsAQQi2JScqv2PgNDcrwMXwAcmJ3g9byEbRqN");
-static const string strSecret2     ("7RexmM8ERicLWvtNVZE3aQnViZLr2gqq1dShPDcSdmgf3MjNx64");
-static const string strSecret1C    ("VGNm8BbQBqchErGkQWKe4jz5Cu396kehHQudY5SrWEonyL9d9dhs");
-static const string strSecret2C    ("VMpZ8jpvG6ey96qjs3EaNTyokRkbQSrWumrRF4fS9JE2uPQ8a1xR");
-static const string strAddressBad  ("SY3js2kVjZii2awydqsnpF8FL9gaKpPcf9");
+static const string strSecret1     ("71sjXft9j1yW3YX5VdtCNoiZiRPjCFrppMtszE2WNH83rkm4eCo");
+static const string strSecret2     ("71FMwLTCuHhUaX6G8qDesKeY5qHdJAZ94MVMA9Bzo8xUtrDTvgw");
+static const string strSecret1C    ("TYrviNcmWTJPCE7kqPnyDFCTPpfKEgav43Dz3aVecvA7cXuDWbna");
+static const string strSecret2C    ("TW6PQprfXnheiwpDoZpr97JgCL8PCmArZoS7yM9Y6e7t7gEacwQd");
+static const string strAddressBad  ("Mi6GgvJhZq2pE9HEv6kPgiCM9eA16Xf88X");
 
 
 #ifdef KEY_TESTS_DUMPINFO
@@ -50,10 +50,10 @@ BOOST_AUTO_TEST_SUITE(key_tests)
 BOOST_AUTO_TEST_CASE(key_test1)
 {
     // Params() needs to be initialised before CBitcoinAddress::SetString
-    CBitcoinAddress addr1 ("SkYqsCFMoSkgZh5gqzses71yRWZsvBTYTA");
-    CBitcoinAddress addr2 ("SbNy74rQ5yGkWw6LiagR8Nnch3TNyMGvd4");
-    CBitcoinAddress addr1C("Sj6Jtef2gkNXBW5MqxS8qUmsWJeewfKuan");
-    CBitcoinAddress addr2C("SYij48kVjZiiWawysqsnpF8FL9gaKpPNf9");
+    CBitcoinAddress addr1 ("MmVcyCSYNjEECUYoy9a5bVvjfrxU3gpD1r");
+    CBitcoinAddress addr2 ("Mc2W5jkhhv3UA6G3YtdySJHSfXMfcMcZ57");
+    CBitcoinAddress addr1C("MZLH2SEVBJagoKzYPFWXNxQ5YvDPyKUvg7");
+    CBitcoinAddress addr2C("MhAJ9dCTEgWoUYXiXJsksVXaP9xygFcYbV");
     
     CBitcoinSecret bsecret1, bsecret2, bsecret1C, bsecret2C, baddress1;
     BOOST_CHECK( bsecret1.SetString (strSecret1));
@@ -63,7 +63,6 @@ BOOST_AUTO_TEST_CASE(key_test1)
     BOOST_CHECK(!baddress1.SetString(strAddressBad));
     
     CKey key1  = bsecret1.GetKey();
-    
     BOOST_CHECK(key1.IsCompressed() == false);
     CKey key2  = bsecret2.GetKey();
     BOOST_CHECK(key2.IsCompressed() == false);

@@ -224,28 +224,28 @@ void RunDeriveTests()
     
     std::vector<DeriveTestData> vMainNetPairs = {
         DeriveTestData(0,
-            std::string("sdcvmnKmFxG9k6UnN3wyLpTv83G1wgYEz1m21rZTUUimoDrYYMrZXUycudse21EZJTmkBBPN3k6Qhfzx5td8xzd9W893YhNozA3bZW3yVLVdrZU2"),
-            std::string("sdcpmphCJNSUos9rNqn6FNi3ztvMW1wft1PVbifvBrwhm6JnhD9yk8rSNFTGfozGbmBsr8vZv9mGYSTfmEMpbfTTMb8TQfj7JRABmvBFKgA2xG8J")),
+            std::string("moivYMcZoUdupxqBNASoNKWbyBzKFPzYA3ZauZhCyQGcUhdvxhgsYNdqBkCbspTmaXWtW68Ha7gjMBjb5gbudrictnzw9KAVKogAXC8FsqiSzRp"),
+            std::string("moipXY9njTPCnsVV8vPCLA1xKp2NXdRtPVyGABKcbshkKQUadnrk2XPccZcSDjefRX64mNjYpS33SAy97UHGWs9WoAufi9pdow9gsYMvVEcmgSk")),
         DeriveTestData(1,
-            std::string("sdcvmnMjfkum2tHDUJ9dJVLw6pitrnbvAHwQrxoukwSxU1zm9H3iEsx2a9R8J1ZncvjwZFdYd9QN33zUX7WvqEUzXUWKumZYnAB4Vgo4zD8jsyYq"),
-            std::string("sdcpmpjAiB666exHV5ykD3b4ygPER81M4HZtSpvNUKftRtT1J8M8TXpr2kzkwpJr3awQ1XaEYVSC1FTVEAxJV3rah692fvg9MpKNpwsRVfTnZVvh")),
+            std::string("moivYPayc8FCcmGHcN6m3CXakesEMTfiSDxS1p9VS8THGqrXstqawM3VhHgst9h63ViGaLJryRe4jBG2JaPmsiZeFAHJDVuHKw96hwDkkUb6grr"),
+            std::string("moipXa8CY6zVafvbP83A132w7GuHdh74fgN7GRmu4btR7YhBYz1TRVoH876iE4E7FGcEA2QBA6xWFAnc44m9uGGrJBUvy6rhD6LjuEY6UWaqvrR")),
         
         DeriveTestData(350,
-            std::string("sdcvmqPip8zYeR3ofPsSajfM5QtRqa8iZk6Z2bskpAJ7fiysxCAdqkG7fYHzNc5zReSHpYZgxtJ5GKTvcRqZW6a8rhurBuXCTqXfANNy5p7qTemf"),
-            std::string("sdcpmsm9rZAsiBisgBhZVHuUxGYmPuY9Tjj2cTzDXYX3dbS873U44Q8w89sd2QriazFKyFGwTTcizkeNvaksc2gLpTVmpzcGxmBGeSNbRwykttFP")),
+            std::string("moivbRa7zD2p9XrUi5v3HWwZLpQD8zU7tP6beszYeycUypyLo1mBof8b6AYxUfttmC4XsGTCiKMHzei7cu2SjohyUZoaMTYy1HjmPX7rMSauunA"),
+            std::string("moipac7LvBn77SWnUqrSFMSuhSSGRDuU7qWGuVcxHT3cpXozU6w4HotNWyxnpc6eeaYBsj768HVVkMgJTsLGt62yfYE632zJ9xEZPji2m6t4jgS")),
     };
     
     std::vector<DeriveTestData> vTestNetPairs = {
         DeriveTestData(0,
-            std::string("SDCVTZWtnQrSZ1LBHScXxi5amgw4Q1zGaRuAy5S12NAttbx3Bmsm1jDYh1B5P5qTPZaWpUZZ5mmubGTYjXPB1cQ9btJmhDoBLHZnwAGUBVH42gB3"),
-            std::string("SDCPTTad968GGU17vZThYUhb4WKgaLQ22ffBVjTnZGGCAcU1vfVFcJEroz4QeZjFZLs5a1dkpZxsKfB2Adnun1axAGuzrfBweXWSxuXu2Wj3AaGp")),
+            std::string("toivSKjjCEpyZjWAeFqJRCtPPXwTSBLDzX327GfZy2u8Gp1gNiTrE8HRuVWBhQFk3kXQw6woCxxYC4yC3MwzQ67RQ4bSgjWTQ1UPkQinHXv9sV9"),
+            std::string("toiprRP1Lw6KTeYbRxdfjunVry7emPouVaqrz8KX3uEKhKeZvsQaxqZEEPpB1uC2T8oMTnZTHj1BQHwUm8Tx634CXb4GrSmbwekU7LVQqt76VSJ")),
         DeriveTestData(1,
-            std::string("SDCVTZYsCDW3qo8cPgpBvNxbkUPwK83wki5ZpBgTJpu5ZQ6Fnh4uj8BxMWiZf6Agi2YiCYojfB5rveT5AkGxsrFzdEg44Hyv8HhFsM1ZgN1keP5r"),
-            std::string("SDCPTTcbYtmsZFoZ2ofMW9ac3HnZVSThCwqaLqiEqizNqQcEXagQKhDGUVbtva3q1AcbjQHRSudnnUAqdaPPfPz5Vmva7v8yhvfe1wE5CW1VbMPQ")),
+            std::string("toivSMi8ztSGMXwGtTVG65uNAzpNYF1QGhRsDX7rRm5o4xEHHucZd6h6R2zThjV4Wiio1M8NcGusa4VdGFjrdwxSkRsokvFFQ8wKw9pHADob9Q7"),
+            std::string("toiprTMR9ahcFSyhgAHdQnoUeRzZsTV5mmEi6NmoWdQzVTsAr4ZJMoxtjwJT2DmUGtKWrSE5dPveDHkwhiwqUSBY2bdY7PofLowX92faqAa5ryG")),
         
         DeriveTestData(350,
-            std::string("SDCVTcarLbaqTKuCanY1CdH1j4ZUHuakAAEhypkJN3kEm75NbcBqKzW3SubRjggtWkF4Tqjszuya9uvXG4bbYiM8xU5aLRwZoy3rY2bTmxwvGxui"),
-            std::string("SDCPTWeahGrfAna9DuPAnPu21sx6UDzVcPziWUn5twqY37bMLVoKvZXMZtUm1AbhYZvXh7z8MspKmyMjKzBxnNoqd9HKGz57JsXXqRjF8nXws6C5")),
+            std::string("toivVPhHNyDstJXTzBJYLQKLmAMMKmooira2raxuecEzmwM6D2YAVQnBourYJFgsER54JHGiMAd6qXwiaaNXW36myqQ5tstw5VXzcjiNmBb7gRo"),
+            std::string("toipuVLZXfVDnDZtmt6uf7DTEbXYezHVDvNsjScrjUaCCSyymBUuE83z8pAXcme1gCFUa8vzbaTdiUee7XWxTFwfPxNhBKwGHfqLdXqX7i7qwr7")),
     };
     CBitcoinExtKey extKey58;
     
@@ -319,7 +319,7 @@ void RunSerialiseTests()
     CStoredExtKey skInvalid, skInvalid_;
     
     CExtKey58 eKey58;
-    BOOST_CHECK(0 == eKey58.Set58("sdcvmnKmFxG9k6UnN3wyLpTv83G1wgYEz1m21rZTUUimoDrYYMrZXUycudse21EZJTmkBBPN3k6Qhfzx5td8xzd9W893YhNozA3bZW3yVLVdrZU2"));
+    BOOST_CHECK(0 == eKey58.Set58("moivYMcZoUdupxqBNASoNKWbyBzKFPzYA3ZauZhCyQGcUhdvxhgsYNdqBkCbspTmaXWtW68Ha7gjMBjb5gbudrictnzw9KAVKogAXC8FsqiSzRp"));
     
     sk.kp = eKey58.GetKey();
     sk.sLabel = "sk label";
@@ -328,10 +328,10 @@ void RunSerialiseTests()
     sk.mapValue[EKVT_CREATED_AT] = SetCompressedInt64(v, nTest8);
     
     eKey58.SetKey(sk.kp, CChainParams::EXT_PUBLIC_KEY);
-    BOOST_CHECK(eKey58.ToString() == "sdcpmphCJNSUos9rNqn6FNi3ztvMW1wft1PVbifvBrwhm6JnhD9yk8rSNFTGfozGbmBsr8vZv9mGYSTfmEMpbfTTMb8TQfj7JRABmvBFKgA2xG8J");
+    BOOST_CHECK(eKey58.ToString() == "moipXY9njTPCnsVV8vPCLA1xKp2NXdRtPVyGABKcbshkKQUadnrk2XPccZcSDjefRX64mNjYpS33SAy97UHGWs9WoAufi9pdow9gsYMvVEcmgSk");
     
     eKey58.SetKeyV(sk.kp);
-    BOOST_CHECK(eKey58.ToString() == "sdcvmnKmFxG9k6UnN3wyLpTv83G1wgYEz1m21rZTUUimoDrYYMrZXUycudse21EZJTmkBBPN3k6Qhfzx5td8xzd9W893YhNozA3bZW3yVLVdrZU2");
+    BOOST_CHECK(eKey58.ToString() == "moivYMcZoUdupxqBNASoNKWbyBzKFPzYA3ZauZhCyQGcUhdvxhgsYNdqBkCbspTmaXWtW68Ha7gjMBjb5gbudrictnzw9KAVKogAXC8FsqiSzRp");
     
     
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
@@ -494,7 +494,7 @@ void RunSerialiseTests()
     CExtKeyPair kp, kpT;
     CTxDestination dest;
     
-    BOOST_CHECK(0 == eKey58.Set58("sdcpmphCJNSUos9rNqn6FNi3ztvMW1wft1PVbifvBrwhm6JnhD9yk8rSNFTGfozGbmBsr8vZv9mGYSTfmEMpbfTTMb8TQfj7JRABmvBFKgA2xG8J"));
+    BOOST_CHECK(0 == eKey58.Set58("moipXY9njTPCnsVV8vPCLA1xKp2NXdRtPVyGABKcbshkKQUadnrk2XPccZcSDjefRX64mNjYpS33SAy97UHGWs9WoAufi9pdow9gsYMvVEcmgSk"));
     kp = eKey58.GetKey();
     CBitcoinAddress addrB(kp);
     BOOST_CHECK(addrB.IsValid() == true);
@@ -503,7 +503,7 @@ void RunSerialiseTests()
     BOOST_CHECK(addr.IsValid() == true);
     BOOST_CHECK(addr.IsValid(CChainParams::EXT_SECRET_KEY) == false);
     BOOST_CHECK(addr.IsValid(CChainParams::EXT_PUBLIC_KEY) == true);
-    BOOST_CHECK(addr.ToString() == "sdcpmphCJNSUos9rNqn6FNi3ztvMW1wft1PVbifvBrwhm6JnhD9yk8rSNFTGfozGbmBsr8vZv9mGYSTfmEMpbfTTMb8TQfj7JRABmvBFKgA2xG8J");
+    BOOST_CHECK(addr.ToString() == "moipXY9njTPCnsVV8vPCLA1xKp2NXdRtPVyGABKcbshkKQUadnrk2XPccZcSDjefRX64mNjYpS33SAy97UHGWs9WoAufi9pdow9gsYMvVEcmgSk");
     dest = addr.Get();
     BOOST_CHECK(dest.type() == typeid(CExtKeyPair));
     kpT = boost::get<CExtKeyPair>(dest);
@@ -524,9 +524,9 @@ void RunSerialiseTests()
     BOOST_CHECK_MESSAGE(addr.ToString() == "XCUfUzXMYkXYvP9RVtdzibVVpMP2bhfWRQ", addr.ToString());
     
     
-    BOOST_CHECK(0 == eKey58.Set58("SDCPTTad968GGU17vZThYUhb4WKgaLQ22ffBVjTnZGGCAcU1vfVFcJEroz4QeZjFZLs5a1dkpZxsKfB2Adnun1axAGuzrfBweXWSxuXu2Wj3AaGp"));
+    BOOST_CHECK(0 == eKey58.Set58("toiprRP1Lw6KTeYbRxdfjunVry7emPouVaqrz8KX3uEKhKeZvsQaxqZEEPpB1uC2T8oMTnZTHj1BQHwUm8Tx634CXb4GrSmbwekU7LVQqt76VSJ"));
     kp = eKey58.GetKey();
-    CBitcoinAddress addrC("SDCVTZWtnQrSZ1LBHScXxi5amgw4Q1zGaRuAy5S12NAttbx3Bmsm1jDYh1B5P5qTPZaWpUZZ5mmubGTYjXPB1cQ9btJmhDoBLHZnwAGUBVH42gB3");
+    CBitcoinAddress addrC("toivSKjjCEpyZjWAeFqJRCtPPXwTSBLDzX327GfZy2u8Gp1gNiTrE8HRuVWBhQFk3kXQw6woCxxYC4yC3MwzQ67RQ4bSgjWTQ1UPkQinHXv9sV9");
     BOOST_CHECK(addrC.IsValid() == true);
     BOOST_CHECK(addrC.IsValid(CChainParams::EXT_PUBLIC_KEY) == true);
     
@@ -534,7 +534,7 @@ void RunSerialiseTests()
     BOOST_CHECK(addr.IsValid() == true);
     BOOST_CHECK(addr.IsValid(CChainParams::EXT_SECRET_KEY) == false);
     BOOST_CHECK(addr.IsValid(CChainParams::EXT_PUBLIC_KEY) == true);
-    BOOST_CHECK(addr.ToString() == "SDCPTTad968GGU17vZThYUhb4WKgaLQ22ffBVjTnZGGCAcU1vfVFcJEroz4QeZjFZLs5a1dkpZxsKfB2Adnun1axAGuzrfBweXWSxuXu2Wj3AaGp");
+    BOOST_CHECK(addr.ToString() == "toiprRP1Lw6KTeYbRxdfjunVry7emPouVaqrz8KX3uEKhKeZvsQaxqZEEPpB1uC2T8oMTnZTHj1BQHwUm8Tx634CXb4GrSmbwekU7LVQqt76VSJ");
     dest = addr.Get();
     BOOST_CHECK(dest.type() == typeid(CExtKeyPair));
     kpT = boost::get<CExtKeyPair>(dest);

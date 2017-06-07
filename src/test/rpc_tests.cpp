@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(rpc_rawparams)
     BOOST_CHECK_THROW(CallRPC("decoderawtransaction"), runtime_error);
     BOOST_CHECK_THROW(CallRPC("decoderawtransaction null"), runtime_error);
     BOOST_CHECK_THROW(CallRPC("decoderawtransaction DEADBEEF"), runtime_error);
-    string rawtx = "01000000fa71525501366c93846a262306e7080d9fc03a327681697315aa814e210de07d7f73e563a30100000000ffffffff0140420f00000000001976a9147f245e0be3aebe44ef05d1565090730cb0474d9188ac00000000";
+    string rawtx = "01000000e2d62f5901dda507f47f8a997b7ecd00090f3eeb909537f8754c77653c99a694733217865c010000006a47304402205e95310ea1f8556bbe82d1a2a9ea4b77dae8430630b411d4473d297f0cc093f102200be6d16cae547ca0b5987091a5065370230e22212a3fd98a716ee874d635b7500121022647c72094b6eb859ca285f32753260160cdb08e6922c4b8aaf2c6c8ed71aaa8ffffffff02f6e156c8100000001976a91415e968da96b17d8833bd777921091d35f71dba9688acb8a39306000000001976a9149ad5d956e33b5fd2fc495db558e70fe0d24a0d2a88ac00000000";
     BOOST_CHECK_NO_THROW(r = CallRPC(string("decoderawtransaction ")+rawtx));
     BOOST_CHECK_EQUAL(find_value(r.get_obj(), "version").get_int(), 1);
     BOOST_CHECK_EQUAL(find_value(r.get_obj(), "locktime").get_int(), 0);
@@ -97,15 +97,16 @@ BOOST_AUTO_TEST_CASE(rpc_rawsign)
       "\"vout\":1,\"scriptPubKey\":\"a914b10c9df5f7edf436c697f02f1efdba4cf399615187\","
       "\"redeemScript\":\"512103debedc17b3df2badbcdd86d5feb4562b86fe182e5998abd8bcd4f122c6155b1b21027e940bb73ab8732bfdf7f9216ecefca5b94d6df834e77e108f68e66f126044c052ae\"}]";
     r = CallRPC(string("createrawtransaction ")+prevout+" "+
-      "{\"SRTHAUgM5vgYVMAe6sq5afWsEz3jQgbp3y\":11}");
+      "{\"oKHzsJ74b4hoDbPUpSFyTSBqkLNSXJSbAz\":11}");
     string notsigned = r.get_str();
-    string privkey1 = "\"VKQFzmWpmCoimgV9MnBk7PMnpgMykH5JNB44wZ441rZhF1f4N4vL\"";
-    string privkey2 = "\"VJEMgF3aM99cTHUUzkTRLqg9qtPb1g9KXnQXze5NGxW8U7vPkTe9\"";
+    string privkey1 = "\"TYSh8qC2fMp55UKvisT2ZJDwqTx9jFpaQsaWE6tv87X9s3KF5yPo\"";
+    string privkey2 = "\"TXGnpJinFJ9xm5KGMqihnkYJrfykzetbaUvyHBvEPDTb69XkcZcc\"";
     r = CallRPC(string("signrawtransaction ")+notsigned+" "+prevout+" "+"[]");
     BOOST_CHECK(find_value(r.get_obj(), "complete").get_bool() == false);
     
     std::string stestA = std::string("signrawtransaction ")+notsigned+" "+prevout+" "+"["+privkey1+","+privkey2+"]";
     r = CallRPC(stestA);
+    //BOOST_TEST_MESSAGE("CallRPC %s\n", stestA.c_str());
     BOOST_CHECK(find_value(r.get_obj(), "complete").get_bool() == true);
     
     std::string stestB = std::string("signrawtransaction ")+notsigned+" "+prevout+" "+"["+privkey1+"]";
