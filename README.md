@@ -91,7 +91,7 @@ Testnet P2P port: 17997 RPC port: 17996
 
 ▲ Coinexchange.io  -  [MOIN-BTC](https://www.coinexchange.io/market/MOIN/BTC)
 
-▲ Novaexchange  -  [MOIN-BTC](https://novaexchange.com/market/BTC_MOIN/)  |  [MOIN-LTC](https://novaexchange.com/market/LTC_MOIN/)
+▲ Novaexchange  -  [MOIN-BTC](https://novaexchange.com/market/BTC_MOIN/)
 
 ▲ C-Cex  -  [MOIN-BTC](https://c-cex.com/?p=moin-btc)  |  [MOIN-LTC](https://c-cex.com/?p=moin-ltc)  |  [MOIN-USD](https://c-cex.com/?p=moin-ltc)
 
