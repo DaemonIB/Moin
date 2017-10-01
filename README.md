@@ -1,4 +1,4 @@
-<img height="50px;" src="https://discovermoin.com/images/logo_sml_blk_txt.png">
+<img height="50px;" src="https://i.imgur.com/JcSv3iT.png">
 
 ![Moin-info](https://i.imgur.com/tAcnr9w.jpg)
 
