@@ -1,0 +1,6 @@
+[submodule "db4.8"]
+	path = db4.8
+	url = https://github.com/DaemonIB/db4.8.git
+[submodule "leveldb"]
+	path = leveldb
+	url = https://github.com/DaemonIB/leveldb.git
